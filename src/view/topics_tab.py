@@ -255,7 +255,7 @@ class TopicsTab(Static):
         """
         Creates the child widgets.
         """
-        # # Table with topics
+        # Table with topics
         yield self.topics_table
 
         # Form widgets

@@ -12,9 +12,14 @@ class NotesTab(Static):
     """
     Notes tab content.
 
-    Attributes:
-        textarea: A TextArea widget for user input.
-        markdown: A Markdown widget for displaying formatted text.
+    Attributes
+    ----------
+    textarea : TextArea
+        A TextArea widget for user input.
+    markdown : Markdown
+        A Markdown widget for displaying formatted text.
+    text_area_changed_action : Callable
+        A callback function to execute when the text area changes.
     """
     textarea: TextArea
     markdown: Markdown
@@ -26,6 +31,11 @@ class NotesTab(Static):
 
         Creates a TextArea widget for user input and a Markdown widget for
         displaying formatted text.
+
+        Parameters
+        ----------
+        **kwargs
+            Additional keyword arguments passed to the parent class.
         """
         super().__init__(**kwargs)
         self.textarea = TextArea(id='notes_textarea', classes="notes-textarea",
@@ -37,6 +47,11 @@ class NotesTab(Static):
     def compose(self) -> ComposeResult:
         """
         Adds the TextArea and Markdown widgets to the Notes tab.
+
+        Returns
+        -------
+        ComposeResult
+            The composed child widgets.
         """
         with Grid():
             yield self.textarea
@@ -45,7 +60,12 @@ class NotesTab(Static):
     @on(TextArea.Changed)
     async def update_markdown(self, event: TextArea.Changed) -> None:
         """
-        Updates the Markdown widget when the TextArea content changes and .
+        Updates the Markdown widget when the TextArea content changes.
+
+        Parameters
+        ----------
+        event : TextArea.Changed
+            The event containing information about the text area change.
         """
         # Update the Markdown widget with the content of the TextArea
         await self.query_one('#notes_markdown').update(event.text_area.text)  # type: ignore

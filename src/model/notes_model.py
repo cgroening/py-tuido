@@ -7,9 +7,12 @@ class Notes(metaclass=Singleton):
     """
     Model for the notes tab.
 
-    Attributes:
-        md_path: The path to the Markdown file containing the notes.
-        notes: The content of the notes.
+    Attributes
+    ----------
+    md_path : str
+        The path to the Markdown file containing the notes.
+    notes : str
+        The content of the notes.
     """
     md_path: str
     notes: str
@@ -18,8 +21,10 @@ class Notes(metaclass=Singleton):
         """
         Initializes the Notes model.
 
-        Args:
-            md_path: The path to the Markdown file containing the notes.
+        Parameters
+        ----------
+        md_path : str
+            The path to the Markdown file containing the notes.
         """
         self.md_path = md_path
         self.load_from_file()
@@ -27,6 +32,7 @@ class Notes(metaclass=Singleton):
     def load_from_file(self):
         """
         Loads the notes from a Markdown file.
+
         If the file does not exist, it creates an empty file.
         """
         # Create the file if it does not exist

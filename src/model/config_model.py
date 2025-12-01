@@ -22,19 +22,30 @@ class FieldDefinition:
     """
     Dataclass for a field definition for the topics table.
 
-    Attributes:
-        name: The internal name of the field.
-        caption: The caption of the field displayed as table column header.
-        type: The type of the field.
-        lines: The number of lines for the field. If lines == 1, an Input will
-            be created, otherwise a TextArea.
-        options: The selectable items if the field type is `FieldType.LIST`.
-        show_in_table: Whether to show the field in the table.
-        table_column_width: The width of the column in the table.
-        input_width: The width of the input field.
-        read_only: Indicates whether the field is read only.
-        computed: Name of the computed value the field gets if the topic is
-            created or updated.
+    Attributes
+    ----------
+    name : str
+        The internal name of the field.
+    caption : str
+        The caption of the field displayed as table column header.
+    type : FieldType
+        The type of the field.
+    lines : int
+        The number of lines for the field. If lines == 1, an Input will
+        be created, otherwise a TextArea.
+    options : list[str | int | float | bool] | None
+        The selectable items if the field type is `FieldType.LIST`.
+    show_in_table : bool
+        Whether to show the field in the table.
+    table_column_width : int
+        The width of the column in the table.
+    input_width : int | None
+        The width of the input field.
+    read_only : bool
+        Indicates whether the field is read only.
+    computed : str | None
+        Name of the computed value the field gets if the topic is
+        created or updated.
     """
     name: str
     caption: str
@@ -51,20 +62,26 @@ class FieldDefinition:
 class Config(metaclass=Singleton):
     """
     Singleton class for the main configuration of the app.
+
     The configuration is loaded from a YAML file.
 
-    Attributes:
-        fields: The fields for the topics (raw data from the YAML file).
+    Attributes
+    ----------
+    fields : list[list[dict[str, str | int | float | bool]]]
+        The fields for the topics (raw data from the YAML file).
 
-            Structure: fields[<row>][<col>][<name|caption|...>]
+        Structure: fields[<row>][<col>][<name|caption|...>]
 
-            Row and column indices are 0-based and define the placement of the
-            corresponding input in the form.
-        columns: The columns of the topics table.
-        columns_dict: A dictionary mapping field names to field definitions.
-        task_column_names: The names of the columns in the tasks kanban.
-        task_column_captions: A dictionary mapping column names to their
-            captions.
+        Row and column indices are 0-based and define the placement of the
+        corresponding input in the form.
+    columns : list[FieldDefinition]
+        The columns of the topics table.
+    columns_dict : dict[str, FieldDefinition]
+        A dictionary mapping field names to field definitions.
+    task_column_names : list[str]
+        The names of the columns in the tasks kanban.
+    task_column_captions : dict[str, str]
+        A dictionary mapping column names to their captions.
     """
     fields: list[list[dict[str, str | int | float | bool]]] = []
     columns: list[FieldDefinition] = []
@@ -77,15 +94,18 @@ class Config(metaclass=Singleton):
         Loads the YAML configuration file and initializes the fields
         and columns.
 
-        Args:
-            yaml_path: The path to the YAML configuration file.
+        Parameters
+        ----------
+        yaml_path : str
+            The path to the YAML configuration file.
 
-        Raises:
-            FileNotFoundError: If the YAML file does not exist.
-            ValueError: If the field type is unknown.
+        Raises
+        ------
+        FileNotFoundError
+            If the YAML file does not exist.
+        ValueError
+            If the field type is unknown.
         """
-        # TODO: Clean up this method and outsource code to helper methods
-
         # Check if yaml file exists
         if not os.path.exists(yaml_path):
             if not os.path.exists(f'../{yaml_path}'):
@@ -137,14 +157,20 @@ class Config(metaclass=Singleton):
         """
         Parses the field type from a string to a FieldType enum.
 
-        Args:
-            type_str: The field type as a string.
+        Parameters
+        ----------
+        type_str : str
+            The field type as a string.
 
-        Returns:
-            FieldType: The field type as a FieldType enum.
+        Returns
+        -------
+        FieldType
+            The field type as a FieldType enum.
 
-        Raises:
-            ValueError: If the field type is unknown.
+        Raises
+        ------
+        ValueError
+            If the field type is unknown.
         """
         type_str = type_str.upper()
 
@@ -161,11 +187,37 @@ class Config(metaclass=Singleton):
                 raise ValueError(f"Unknown field type: {type_str}")
 
     def parse_show_in_table(self, table_column_width: str | None) -> bool:
+        """
+        Determines whether a field should be shown in the table.
+
+        Parameters
+        ----------
+        table_column_width : str | None
+            The width of the table column.
+
+        Returns
+        -------
+        bool
+            True if the field should be shown in the table, False otherwise.
+        """
         if table_column_width is not None and int(table_column_width) >= 0:
             return True
         return False
 
     def parse_table_column_width(self, table_column_width: str) -> int:
+        """
+        Parses the table column width from a string to an integer.
+
+        Parameters
+        ----------
+        table_column_width : str
+            The width of the table column as a string.
+
+        Returns
+        -------
+        int
+            The width of the table column as an integer, or -1 if not specified.
+        """
         if table_column_width is not None and int(table_column_width) >= 0:
             return int(table_column_width)
         return -1

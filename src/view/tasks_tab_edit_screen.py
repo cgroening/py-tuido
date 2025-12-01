@@ -20,11 +20,17 @@ from model.config_model import Config
 
 
 class DateName(Enum):
+    """
+    Enum for date field names.
+    """
     START_DATE = 'start_date'
     END_DATE = 'end_date'
 
 
 class DateAdjustment(Enum):
+    """
+    Enum for date adjustment types.
+    """
     DECREASE = 'decrease'
     INCREASE = 'increase'
 
@@ -37,17 +43,28 @@ class TaskEditScreen(ModalScreen):
     and specify start and end dates. It also includes a submit button to
     submit the entered data.
 
-    Attributes:
-        tuido_app: The main application instance.
-        list_views: Dictionary of list views for the tasks.
-        description_input: Input field for task description.
-        priority_input: Dropdown for selecting task priority.
-        start_date_input: Input field for start date.
-        start_date_label: Label for displaying the start date.
-        end_date_input: Input field for end date.
-        end_date_label: Label for displaying the end date.
-        invalid_inputs: Set of IDs of invalid input fields.
-        original_task: The original task object, if any, to be edited.
+    Attributes
+    ----------
+    tuido_app : App
+        The main application instance.
+    list_views : dict[str, ListView | Any]
+        Dictionary of list views for the tasks.
+    description_input : Input
+        Input field for task description.
+    priority_input : Select
+        Dropdown for selecting task priority.
+    start_date_input : MaskedInput
+        Input field for start date.
+    start_date_weekday_label : Label
+        Label for displaying the start date weekday.
+    end_date_input : MaskedInput
+        Input field for end date.
+    end_date_weekday_label : Label
+        Label for displaying the end date weekday.
+    invalid_inputs : set[str]
+        Set of IDs of invalid input fields.
+    original_task : Task | None
+        The original task object, if any, to be edited.
     """
     tuido_app: App
     list_views: dict[str, ListView | Any] = {}
@@ -100,6 +117,17 @@ class TaskEditScreen(ModalScreen):
     class Submit(Message):
         """
         Message to be sent when the form is submitted.
+
+        Attributes
+        ----------
+        description : str
+            The task description.
+        priority : Any
+            The task priority.
+        start_date : str
+            The task start date.
+        end_date : str
+            The task end date.
         """
         def __init__(self, description: str, priority: Any, start_date: str,
                      end_date: str) -> None:
@@ -115,9 +143,14 @@ class TaskEditScreen(ModalScreen):
         """
         Initializes the popup with a dictionary of list views.
 
-        Args:
-            tuido_app: The main application instance.
-            list_views: A dictionary containing the list views for the tasks.
+        Parameters
+        ----------
+        tuido_app : App
+            The main application instance.
+        list_views : dict[str, ListView | Any]
+            A dictionary containing the list views for the tasks.
+        **kwargs
+            Additional keyword arguments.
         """
         super().__init__(**kwargs)
         self.tuido_app = tuido_app
@@ -151,6 +184,11 @@ class TaskEditScreen(ModalScreen):
 
         This includes input fields for task description, priority, start date,
         end date, and a submit button.
+
+        Returns
+        -------
+        ComposeResult
+            The composed child widgets.
         """
         with Static(id='main_container'):
             yield Label('Description:')
@@ -185,9 +223,17 @@ class TaskEditScreen(ModalScreen):
         """
         Checks if an action should be processed or ignored.
 
-        Args:
-            action: The action name.
-            parameters: The action parameters.
+        Parameters
+        ----------
+        action : str
+            The action name.
+        parameters : tuple[object, ...]
+            The action parameters.
+
+        Returns
+        -------
+        bool | None
+            True if the action should be processed, None if it should be ignored.
         """
         # Suppress the save action if the priority input has focus or is
         # expanded
@@ -202,8 +248,9 @@ class TaskEditScreen(ModalScreen):
     @work
     async def action_close_modal(self) -> None:
         """
-        Closes the modal popup without saving changes. Asks the user to confirm
-        if there are unsaved changes.
+        Closes the modal popup without saving changes.
+
+        Asks the user to confirm if there are unsaved changes.
         """
         discard = await self.discard_unsaved_changes()
 
@@ -243,7 +290,7 @@ class TaskEditScreen(ModalScreen):
 
     def action_clear_start_date(self) -> None:
         """
-            Removes the value from the start date input field.
+        Removes the value from the start date input field.
         """
         self.start_date_input.value = ''
         self.update_weekday_labels()
@@ -251,7 +298,7 @@ class TaskEditScreen(ModalScreen):
 
     def action_clear_end_date(self) -> None:
         """
-            Removes the value from the end date input field.
+        Removes the value from the end date input field.
         """
         self.end_date_input.value = ''
         self.update_weekday_labels()
@@ -263,9 +310,11 @@ class TaskEditScreen(ModalScreen):
         Sets the end date to be the same as the start date if the start date is
         later than the end date.
 
-        Args:
-            adjust_start_date: If True, adjusts the start date instead of the
-                end date when the start date is after the end date.
+        Parameters
+        ----------
+        adjust_start_date : bool, optional
+            If True, adjusts the start date instead of the end date when the
+            start date is after the end date (default is False).
         """
         # Parse the date values from the input fields
         try:
@@ -300,8 +349,12 @@ class TaskEditScreen(ModalScreen):
         Checks if there are unsaved changes in the popup.
 
         If there are unsaved changes, it prompts the user to confirm if they
-        want to discard the changes. Returns True if the user confirms, False
-        otherwise.
+        want to discard the changes.
+
+        Returns
+        -------
+        bool
+            True if the user confirms to discard changes, False otherwise.
         """
         # Parse the priority input value to compare with the original task
         tasks_model = self.tuido_app.tasks_controller.tasks_model
@@ -342,8 +395,10 @@ class TaskEditScreen(ModalScreen):
         """
         Sets the input values in the popup based on the provided task.
 
-        Args:
-            task: The task object containing the values to be set.
+        Parameters
+        ----------
+        task : Task
+            The task object containing the values to be set.
         """
         self.original_task = task
         self.description_input.value = task.description
@@ -367,6 +422,11 @@ class TaskEditScreen(ModalScreen):
     def _set_priority_value(self, priority: str | None) -> None:
         """
         Helper method to set the priority input value delayed.
+
+        Parameters
+        ----------
+        priority : str | None
+            The priority value to set.
         """
         if priority:
             self.priority_input.value = priority
@@ -377,9 +437,12 @@ class TaskEditScreen(ModalScreen):
         Adjusts the date in the input field based on the provided date name
         and adjustment type.
 
-        Args:
-            date_name: The name of the date input field (start or end date).
-            adjustment: The type of adjustment (increase or decrease).
+        Parameters
+        ----------
+        date_name : DateName
+            The name of the date input field (start or end date).
+        adjustment : DateAdjustment
+            The type of adjustment (increase or decrease).
         """
         # Get the input widget instance and determine the adjustment factor
         match date_name:
@@ -426,8 +489,10 @@ class TaskEditScreen(ModalScreen):
 
         Also updates the weekday labels for the start and end date inputs.
 
-        Args:
-            event: The input change event.
+        Parameters
+        ----------
+        event : Input.Changed
+            The input change event.
         """
         if event.input.id in ['start_date', 'end_date']:
             value = event.value
@@ -449,8 +514,10 @@ class TaskEditScreen(ModalScreen):
 
         If the Enter key is pressed, it triggers the save action.
 
-        Args:
-            event: The key press event.
+        Parameters
+        ----------
+        event : events.Key
+            The key press event.
         """
         pass
         # if event.key == 'enter':
@@ -469,11 +536,15 @@ class TaskEditScreen(ModalScreen):
         Checks if the date string is in the format YYYY-MM-DD and if it is a
         valid date.
 
-        Args:
-            date_str: The date string to validate.
+        Parameters
+        ----------
+        date_str : str
+            The date string to validate.
 
-        Returns:
-            bool: True if the date string is valid, False otherwise.
+        Returns
+        -------
+        bool
+            True if the date string is valid, False otherwise.
         """
         # Check if the date string matches the format YYYY-MM-DD
         if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_str):
@@ -504,18 +575,22 @@ class TaskEditScreen(ModalScreen):
         """
         Returns the name of the weekday for a given date string.
 
-        Args:
-            date_str: The date string in the format YYYY-MM-DD.
+        Parameters
+        ----------
+        date_str : str
+            The date string in the format YYYY-MM-DD.
 
-        Returns:
-            str: The name of the weekday.
+        Returns
+        -------
+        str
+            The name of the weekday, or empty string if invalid.
         """
         if not date_str:
             return ''
 
         try:
             date = datetime.strptime(date_str, "%Y-%m-%d")
-            return f'({date.strftime('%A')})'
+            return f'({date.strftime("%A")})'
         except ValueError:
             return ''
 
@@ -543,8 +618,10 @@ class TaskEditScreen(ModalScreen):
         If there are invalid inputs, it shows an error message and returns
         True. Otherwise, it returns False.
 
-        Returns:
-            bool: True if there are invalid inputs, False otherwise.
+        Returns
+        -------
+        bool
+            True if there are invalid inputs, False otherwise.
         """
         if len(self.invalid_inputs) > 0:
             self.app.notify(
@@ -558,6 +635,11 @@ class TaskEditScreen(ModalScreen):
     def set_list_view_state(self, enabled: bool) -> None:
         """
         Sets the state of the list views to either enabled or disabled.
+
+        Parameters
+        ----------
+        enabled : bool
+            If True, enables the list views; if False, disables them.
         """
         for list_view in self.list_views.values():
             list_view.can_focus = enabled
@@ -569,5 +651,10 @@ class TaskEditScreen(ModalScreen):
 
         This method is currently empty but can be used to perform any cleanup
         actions when the popup is removed from the screen.
+
+        Parameters
+        ----------
+        event : Message
+            The unmount event.
         """
         pass

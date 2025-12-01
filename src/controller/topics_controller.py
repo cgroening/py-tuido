@@ -25,21 +25,28 @@ class TopicAction(enum.Enum):
 class TopicsController(metaclass=Singleton):
     """
     Controller for managing topics.
+
     This class handles the initialization of the topics table and
     updating input fields based on the selected row.
 
-    Attributes:
-        config: The configuration object containing the table columns.
-        topics_model: The Topic model containing the data.
-        main_tabs: The main tabs widget for the app.
-        app_startup: A flag indicating if the app is starting up.
-        programmatically_changed_inputs: A set of inputs that were recently
-            changed programmatically. Inputs in this set will not be
-            considered as user changes the next time `on_input_changed()`
-            is triggered.
-        user_changed_inputs: A set of inputs that were changed by the user.
-            If this set is not empty, the topics table will be disabled to
-            prevent unsaved changes in the input fields from being lost.
+    Attributes
+    ----------
+    config : Config
+        The configuration object containing the table columns.
+    topics_model : Topic
+        The Topic model containing the data.
+    main_tabs : MainTabs
+        The main tabs widget for the app.
+    app_startup : bool
+        A flag indicating if the app is starting up.
+    programmatically_changed_inputs : set[str]
+        A set of inputs that were recently changed programmatically. Inputs in
+        this set will not be considered as user changes the next time
+        `on_input_changed()` is triggered.
+    user_changed_inputs : set[str]
+        A set of inputs that were changed by the user. If this set is not empty,
+        the topics table will be disabled to prevent unsaved changes in the input
+        fields from being lost.
     """
     config: Config
     topics_model: Topic
@@ -53,9 +60,14 @@ class TopicsController(metaclass=Singleton):
         """
         Initializes the TopicsController with a configuration and model.
 
-        Args:
-            config: The configuration object containing the table columns.
-            model: The Topic model containing the data.
+        Parameters
+        ----------
+        config : Config
+            The configuration object containing the table columns.
+        model : Topic
+            The Topic model containing the data.
+        main_tabs : MainTabs
+            The main tabs widget for the app.
         """
         self.config = config
         self.topics_model = model
@@ -65,8 +77,10 @@ class TopicsController(metaclass=Singleton):
         """
         Initializes the table columns and rows based on config and data.
 
-        Args:
-            table: The DataTable widget to be initialized.
+        Parameters
+        ----------
+        table : DataTable
+            The DataTable widget to be initialized.
         """
         self.create_table_columns(table)
         self.add_table_rows(table)
@@ -74,6 +88,11 @@ class TopicsController(metaclass=Singleton):
     def create_table_columns(self, table: DataTable) -> None:
         """
         Creates the columns in the topics table based on the configuration file.
+
+        Parameters
+        ----------
+        table : DataTable
+            The DataTable widget to add columns to.
         """
         # Add ID column
         table.add_column('ID', key='id')
@@ -90,6 +109,11 @@ class TopicsController(metaclass=Singleton):
     def add_table_rows(self, table: DataTable) -> None:
         """
         Adds rows to the topics table based on the data in the model.
+
+        Parameters
+        ----------
+        table : DataTable
+            The DataTable widget to add rows to.
         """
         # Add rows to the table
         for row in self.topics_model.data:
@@ -113,8 +137,10 @@ class TopicsController(metaclass=Singleton):
         """
         Sorts the table by ID in descending order.
 
-        Args:
-            table: The DataTable widget to be sorted.
+        Parameters
+        ----------
+        table : DataTable
+            The DataTable widget to be sorted.
         """
         # table.sort('id', key=lambda id: int(id.plain), reverse=True)
         # table.sort('id', key=lambda id: int(str(id)), reverse=True)
@@ -125,9 +151,12 @@ class TopicsController(metaclass=Singleton):
         """
         Fills inputs based on the selected row.
 
-        Args:
-            row_index: The index of the selected row in the table.
-            input_query_func: A function to query input widgets by ID.
+        Parameters
+        ----------
+        input_query_func : Callable
+            A function to query input widgets by ID.
+        called_from_discard : bool, optional
+            Whether this method is called from the discard action (default is False).
         """
         # Get ID of the currently selected topic
         selected_id = self.main_tabs.topics_tab.topics_table.get_current_id()
@@ -167,10 +196,14 @@ class TopicsController(metaclass=Singleton):
         """
         Sets the value of the input field based on its type.
 
-        Args:
-            field: The field definition object.
-            value: The value to set in the input field.
-            input_query_func: A function to query input widgets by ID.
+        Parameters
+        ----------
+        field : FieldDefinition
+            The field definition object.
+        value : str
+            The value to set in the input field.
+        input_query_func : Callable
+            A function to query input widgets by ID.
         """
         match field.type:
             case FieldType.STRING:
@@ -237,8 +270,10 @@ class TopicsController(metaclass=Singleton):
         """
         Saves a topic to the model and updates the table.
 
-        Args:
-            input_query_func: A function to query input widgets by ID.
+        Parameters
+        ----------
+        input_query_func : Callable
+            A function to query input widgets by ID.
         """
         topic_id = self.main_tabs.topics_tab.topics_table.get_current_id()
         if topic_id is None:
@@ -299,11 +334,16 @@ class TopicsController(metaclass=Singleton):
         Applies field functions (e.g. 'created_date' or 'edit_date')
         to the topic based on the action (new/edit).
 
-        Args:
-            topic: The topic data to be updated.
-            topic_action: The action to perform (new or edit).
+        Parameters
+        ----------
+        topic : dict[str, str | int | float | bool]
+            The topic data to be updated.
+        topic_action : TopicAction
+            The action to perform (new or edit).
 
-        Returns:
+        Returns
+        -------
+        dict[str, str | int | float | bool]
             The updated topic data.
         """
         field_names = list(topic.keys())
@@ -331,10 +371,14 @@ class TopicsController(metaclass=Singleton):
         """
         Updates a row of the table.
 
-        Args:
-            col_index: The index of the column to be updated.
-            field: The field definition object.
-            value: The new value to set in the table cell.
+        Parameters
+        ----------
+        col_index : int
+            The index of the column to be updated.
+        field : FieldDefinition
+            The field definition object.
+        value : str
+            The new value to set in the table cell.
         """
         if not field.show_in_table:
             return

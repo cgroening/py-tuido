@@ -9,10 +9,14 @@ class Topic(metaclass=Singleton):
     """
     Model for the topics.
 
-    Attributes:
-        json_path: The path to the JSON file containing the topics data.
-        data: The data loaded from the JSON file.
-        topics_by_id: A dictionary mapping topic IDs to their data.
+    Attributes
+    ----------
+    json_path : str
+        The path to the JSON file containing the topics data.
+    data : list[dict[str, str | int | float | bool]]
+        The data loaded from the JSON file.
+    topics_by_id : dict[int, dict[str, str | int | float | bool]]
+        A dictionary mapping topic IDs to their data.
     """
     json_path: str
     data: list[dict[str, str | int | float | bool]] = []
@@ -23,8 +27,10 @@ class Topic(metaclass=Singleton):
         """
         Initializes the Topic model.
 
-        Args:
-            json_path: The path to the JSON file containing the topics data.
+        Parameters
+        ----------
+        json_path : str
+            The path to the JSON file containing the topics data.
         """
         self.json_path = json_path
         self.load_from_file()
@@ -80,8 +86,10 @@ class Topic(metaclass=Singleton):
         """
         Add a new topic to `data` and `topics_by_id` and save it to JSON file.
 
-        Args:
-            topic: The topic data to be added.
+        Parameters
+        ----------
+        topic : dict[str, str | int | float | bool]
+            The topic data to be added.
         """
         self.data.append(topic)
         self.topics_by_id[int(topic['id'])] = topic
@@ -96,9 +104,12 @@ class Topic(metaclass=Singleton):
         Updates a topic in `data` and `topics_by_id` and saves the changes
         to the JSON file.
 
-        Args:
-            topic_id: The ID of the topic to be updated.
-            updated:topic: The updated topic data.
+        Parameters
+        ----------
+        topic_id : int
+            The ID of the topic to be updated.
+        updated_topic : dict[str, str | int | float | bool]
+            The updated topic data.
         """
         old_topic_data = self.topics_by_id.get(topic_id)
         if old_topic_data is None:
@@ -118,8 +129,10 @@ class Topic(metaclass=Singleton):
         Deletes a topic from `data` and `topics_by_id` and saves the changes
         to the JSON file.
 
-        Args:
-            topic_id: The ID of the topic to be deleted.
+        Parameters
+        ----------
+        topic_id : int
+            The ID of the topic to be deleted.
         """
         topic = self.topics_by_id.pop(topic_id, None)
         if topic:

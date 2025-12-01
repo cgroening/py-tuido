@@ -10,15 +10,22 @@ from view.notes_tab import NotesTab
 
 class MainTabs(Container):
     """
-    Main tabs container
+    Main tabs container.
 
-    Attributes:
-        tudio_app: The main application instance.
-        current_tab: The currently selected tab.
-        tabs: The Tabs widget.
-        topics_tab: The topics tab widget.
-        tasks_tab: The tasks tab widget.
-        notes_tab: The notes tab widget.
+    Attributes
+    ----------
+    tuido_app : App
+        The main application instance.
+    current_tab_name : reactive
+        The currently selected tab.
+    tabs : Tabs
+        The Tabs widget.
+    topics_tab : TopicsTab
+        The topics tab widget.
+    tasks_tab : TasksTab
+        The tasks tab widget.
+    notes_tab : NotesTab
+        The notes tab widget.
     """
     tuido_app: App
     current_tab_name = reactive('topics', bindings=True)
@@ -32,9 +39,12 @@ class MainTabs(Container):
         """
         Initializes the MainTabs container.
 
-        Args:
-            app: The main application instance.
-            **kwargs: Additional keyword arguments.
+        Parameters
+        ----------
+        tuido_app : App
+            The main application instance.
+        **kwargs
+            Additional keyword arguments.
         """
         self.tasks_tab = TasksTab(tuido_app, id='tasks-tab')
         super().__init__(**kwargs)
@@ -45,6 +55,11 @@ class MainTabs(Container):
     def compose(self) -> ComposeResult:
         """
         Creates the child widgets.
+
+        Returns
+        -------
+        ComposeResult
+            The composed child widgets.
         """
         # Tab labels
         self.tabs = Tabs(
@@ -57,7 +72,6 @@ class MainTabs(Container):
         yield self.tabs
 
         # Pre-create all tab contents, but only the current one will be visible
-        # yield TopicsTab(id="topics-tab")
         yield self.tasks_tab
         yield self.topics_tab
         yield self.notes_tab
@@ -67,11 +81,13 @@ class MainTabs(Container):
         Handles tab change events.
 
         This method is called when a tab is activated. It hides all tabs except
-        the selected one. It also updates the reactive variable `current_tab`
+        the selected one. It also updates the reactive variable `current_tab_name`
         to reflect the selected tab.
 
-        Args:
-            event: The event containing information about the activated tab.
+        Parameters
+        ----------
+        event : Tabs.TabActivated
+            The event containing information about the activated tab.
         """
         if event.tab.id is not None:
             # Hide all tabs first

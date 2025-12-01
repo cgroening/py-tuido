@@ -44,21 +44,28 @@ class TuidoApp(App):
     Tuido app is a simple application that provides a user interface for
     managing topics, tasks and notes.
 
-    Attributes:
-        config: The configuration object for the app.
-        topics_model: The topics model.
-        notes_model: The notes model.
-        topics_controller: The controller object for managing topics.
-        notes_controller: The controller object for managing notes.
-        main_view: Main view of the application, containing the main layout
-            and widgets.
-        popup_name: The name of the currently displayed popup; None if no
-            popup is shown.
-        footer: The footer widget of the app.
-        last_escape_key: Timestamp of the last 'escape' key press, used to
-            toggle global key bindings.
-        escape_pressed_twice: Reactive flag indicating whether the 'escape' key
-            was pressed twice.
+    Attributes
+    ----------
+    config : Config
+        The configuration object for the app.
+    topics_model : Topic
+        The topics model.
+    notes_model : Notes
+        The notes model.
+    topics_controller : TopicsController
+        The controller object for managing topics.
+    notes_controller : NotesController
+        The controller object for managing notes.
+    main_view : MainTabs
+        Main view of the application, containing the main layout and widgets.
+    popup_name : str | None
+        The name of the currently displayed popup; None if no popup is shown.
+    footer : Footer
+        The footer widget of the app.
+    last_escape_key : float
+        Timestamp of the last 'escape' key press, used to toggle global key bindings.
+    escape_pressed_twice : reactive
+        Reactive flag indicating whether the 'escape' key was pressed twice.
     """
     TITLE = "Tuido"
     CSS_PATH = 'view/app_style.css'
@@ -78,9 +85,6 @@ class TuidoApp(App):
     def __init__(self) -> None:
         """
         Initializes the app.
-
-        Args:
-            args: The command line arguments.
         """
         super().__init__()
 
@@ -125,6 +129,11 @@ class TuidoApp(App):
     def compose(self) -> ComposeResult:
         """
         Creates the child widgets.
+
+        Returns
+        -------
+        ComposeResult
+            The composed child widgets.
         """
         yield Header(icon='🗂️')
         yield self.main_view
@@ -166,8 +175,10 @@ class TuidoApp(App):
         If the 'escape' key is pressed, it toggles the global key bindings
         based on the time interval between presses.
 
-        Args:
-            event: The key press event.
+        Parameters
+        ----------
+        event : events.Key
+            The key press event.
         """
         # self.notify(f'Key pressed: {event.key}')
         # if event.key == 'escape':
@@ -185,8 +196,10 @@ class TuidoApp(App):
         Writes the name of the theme to the config file and loads the CSS
         file(s) for the new theme.
 
-        Args:
-            theme_name: The new theme name.
+        Parameters
+        ----------
+        theme_name : str
+            The new theme name.
         """
         self.update_header_theme_name()
         theme_loader.save_theme_to_config(theme_name, THEME_CONFIG_FILE)
@@ -208,16 +221,19 @@ class TuidoApp(App):
         current active group (tab) and whether global keys should be shown
         based on the `escape_pressed_twice` flag.
 
-        Args:
-            action: The action to check.
-            parameters: Parameters for the action.
-            active_group: The currently active group (tab) name.
-            show_global_keys: Flag indicating whether to show global keys.
+        Parameters
+        ----------
+        action : str
+            The action to check.
+        parameters : tuple[object, ...]
+            Parameters for the action.
 
-        Returns:
-            bool | None: True if the corresponding key of the action is to be
-                displayed or None if not. False if the action is valid for the
-                current context but is to be displayed as disabled.
+        Returns
+        -------
+        bool | None
+            True if the corresponding key of the action is to be displayed or
+            None if not. False if the action is valid for the current context
+            but is to be displayed as disabled.
         """
         return CUSTOM_BINDINGS.handle_check_action(
             action=action,
@@ -326,6 +342,7 @@ class TuidoApp(App):
     async def action_tasks_delete(self) -> None:
         """
         Deletes the currently selected task.
+
         The user will be asked for confirmation before the task is deleted.
         """
         if await self.push_screen_wait(
@@ -380,6 +397,7 @@ class TuidoApp(App):
     async def action_topics_discard(self) -> None:
         """
         Discards the changes made to the currently selected topic.
+
         The input fields will be reset to the original values from the model.
         The topics table will be re-enabled. The user will be asked for
         confirmation before the changes are discarded.
@@ -444,12 +462,14 @@ class TuidoApp(App):
     ) -> None:
         """
         Is triggered when a row in the DataTable is highlighted.
+
         This method updates the input fields with the values from the
         selected row.
 
-        Args:
-            event: The event containing information about the
-            highlighted row.
+        Parameters
+        ----------
+        event : DataTable.RowHighlighted
+            The event containing information about the highlighted row.
         """
         self.topics_controller.update_input_fields(
             lambda id: self.query_one(id)
@@ -464,11 +484,14 @@ class TuidoApp(App):
     def on_input_changed(self, event: Input.Changed) -> None:
         """
         Is triggered when the value of an Input is changed.
+
         If the input field is changed programmatically, it will be ignored.
         Otherwise, `self.compare_input_value_to_original` is called.
 
-        Args:
-            event: The event containing information about the changed input.
+        Parameters
+        ----------
+        event : Input.Changed
+            The event containing information about the changed input.
         """
         input_name = event.input.id
         if input_name in self.topics_controller.programmatically_changed_inputs:
@@ -481,11 +504,14 @@ class TuidoApp(App):
     def on_text_area_changed(self, event: TextArea.Changed) -> None:
         """
         Is triggered when the value of a TextArea is changed.
+
         If the input field is changed programmatically, it will be ignored.
         Otherwise, `self.compare_input_value_to_original` is called.
 
-        Args:
-            event: The event containing information about the changed input.
+        Parameters
+        ----------
+        event : TextArea.Changed
+            The event containing information about the changed input.
         """
         input_name = event.text_area.id
 
@@ -513,11 +539,14 @@ class TuidoApp(App):
     def on_select_changed(self, event: Select.Changed) -> None:
         """
         Is triggered when the value of a Select is changed.
+
         If the input field is changed programmatically, it will be ignored.
         Otherwise, `self.compare_input_value_to_original` is called.
 
-        Args:
-            event: The event containing information about the changed select.
+        Parameters
+        ----------
+        event : Select.Changed
+            The event containing information about the changed select.
         """
         input_name = event.select.id
         if input_name in self.topics_controller.programmatically_changed_inputs:
@@ -532,13 +561,17 @@ class TuidoApp(App):
     ) -> None:
         """
         Compares the current value of the input field to the original value
-        from the model. If the values are different, the input field is
-        marked as changed and the topics table is deactivated. If the
-        values are the same, the input field is marked as unchanged and
-        the topics table is activated.
+        from the model.
 
-        Args:
-            event: The event containing information about the changed input.
+        If the values are different, the input field is marked as changed
+        and the topics table is deactivated. If the values are the same,
+        the input field is marked as unchanged and the topics table is
+        activated.
+
+        Parameters
+        ----------
+        event : Input.Changed | TextArea.Changed | Select.Changed
+            The event containing information about the changed input.
         """
         # TODO: Cleanup/extract code to separate methods
 
@@ -616,6 +649,13 @@ class TuidoApp(App):
     -> None:
         """
         Pastes the given text into the input widget at the cursor position.
+
+        Parameters
+        ----------
+        input : Input
+            The input widget to paste into.
+        text : str
+            The text to paste.
         """
         cursor_pos = input.cursor_position or len(input.value)
         input.insert(text, cursor_pos)
@@ -626,6 +666,13 @@ class TuidoApp(App):
     -> None:
         """
         Pastes the given text into the textarea at the cursor position.
+
+        Parameters
+        ----------
+        textarea : TextArea
+            The textarea widget to paste into.
+        text : str
+            The text to paste.
         """
         cursor_pos: tuple[int, int] = textarea.cursor_location or (0, 0)
         textarea.insert(text, cursor_pos)

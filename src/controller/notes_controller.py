@@ -21,16 +21,26 @@ class NotesController(metaclass=Singleton):
     It implements a throttle and debounce mechanism to optimize performance
     when the user types in the TextArea.
 
-    Attributes:
-        config: The configuration object.
-        notes_model: The notes model object.
-        main_tabs: The main tabs object.
-        throttle_interval: Time interval for the throttle mechanism.
-        debounce_interval: Time interval for the debounce mechanism.
-        last_throttle_call: Timestamp of the last throttle call.
-        latest_text: The latest text entered in the TextArea.
-        throttle_lock: A threading lock for thread-safe operations.
-        debounce_timer: A timer for the debounce mechanism.
+    Attributes
+    ----------
+    config : Config
+        The configuration object.
+    notes_model : Notes
+        The notes model object.
+    main_tabs : MainTabs
+        The main tabs object.
+    throttle_interval : float
+        Time interval for the throttle mechanism.
+    debounce_interval : float
+        Time interval for the debounce mechanism.
+    last_throttle_call : float
+        Timestamp of the last throttle call.
+    latest_text : str
+        The latest text entered in the TextArea.
+    throttle_lock : threading.Lock
+        A threading lock for thread-safe operations.
+    debounce_timer : threading.Timer | None
+        A timer for the debounce mechanism.
     """
     config: Config
     notes_model: Notes
@@ -46,10 +56,14 @@ class NotesController(metaclass=Singleton):
         """
         Initializes the NotesController.
 
-        Args:
-            config: The configuration object.
-            notes_model: The notes model object.
-            main_tabs: The main tabs object.
+        Parameters
+        ----------
+        config : Config
+            The configuration object.
+        notes_model : Notes
+            The notes model object.
+        main_tabs : MainTabs
+            The main tabs object.
         """
         self.config = config
         self.notes_model = notes_model
@@ -79,8 +93,10 @@ class NotesController(metaclass=Singleton):
         The debounce mechanism ensures that the text is finally saved after the
         user has stopped typing for a certain interval of time.
 
-        Args:
-            text: The text entered in the TextArea.
+        Parameters
+        ----------
+        text : str
+            The text entered in the TextArea.
         """
         now = time.time()
 
@@ -105,9 +121,12 @@ class NotesController(metaclass=Singleton):
 
         This method is called when the user types in the TextArea.
 
-        Args:
-            text: The text entered in the TextArea.
-            reason: The reason for saving the text ("throttle" or "debounce").
+        Parameters
+        ----------
+        text : str
+            The text entered in the TextArea.
+        reason : str
+            The reason for saving the text ("throttle" or "debounce").
         """
         if self.notes_model.notes != text:
             self.notes_model.notes = text

@@ -31,14 +31,20 @@ class TasksController:
     user interface. It provides methods for displaying the task form,
     saving tasks, moving tasks between columns, and deleting tasks.
 
-    Attributes:
-        config: The configuration object.
-        tasks_model: The tasks model object.
-        main_tabs: The main tabs object.
-        tuido_app: The main application object.
-        task_action: The action to perform (new or edit).
-        index_of_new_task: The index of the most recently
-            added or modified task (-1 if not applicable).
+    Attributes
+    ----------
+    config : Config
+        The configuration object.
+    tasks_model : Tasks
+        The tasks model object.
+    main_tabs : MainTabs
+        The main tabs object.
+    tuido_app : App
+        The main application object.
+    task_action : TaskAction
+        The action to perform (new or edit).
+    index_of_new_task : int
+        The index of the most recently added or modified task (-1 if not applicable).
     """
     config: Config
     tasks_model: Tasks
@@ -55,11 +61,16 @@ class TasksController:
         """
         Initializes the TasksController.
 
-        Args:
-            config: The configuration object.
-            tasks_model: The tasks model object.
-            main_tabs: The main tabs object.
-            tuido_app: The main application object.
+        Parameters
+        ----------
+        config : Config
+            The configuration object.
+        tasks_model : Tasks
+            The tasks model object.
+        main_tabs : MainTabs
+            The main tabs object.
+        tuido_app : App
+            The main application object.
         """
         self.config = config
         self.tasks_model = tasks_model
@@ -78,8 +89,10 @@ class TasksController:
         """
         Displays the task form for creating or editing a task.
 
-        Args:
-            task_action: The action to perform (new or edit).
+        Parameters
+        ----------
+        task_action : TaskAction
+            The action to perform (new or edit).
         """
         self.task_action = task_action
 
@@ -116,6 +129,11 @@ class TasksController:
         """
         Sets the input values for the task form based on the selected task
         if the task action is `TaskAction.EDIT`.
+
+        Parameters
+        ----------
+        task_edit_screen : TaskEditScreen
+            The task edit screen to set input values for.
         """
         if self.task_action == TaskAction.EDIT:
             # Get name of the active list view and index of the selected task
@@ -135,8 +153,10 @@ class TasksController:
 
         This method is called when the user submits the task form.
 
-        Args:
-            message: The message containing the task data from the input form.
+        Parameters
+        ----------
+        message : TaskEditScreen.Submit
+            The message containing the task data from the input form.
         """
         tasks_model = self.tasks_model
 
@@ -178,14 +198,17 @@ class TasksController:
         self, column_name: str, new_task: Task
     ) -> None:
         """
-        Stores the index of the newly added or edited task. This is used to
-        reselect the task in the list view after the edit screen is closed and
-        the list view is recreated.
+        Stores the index of the newly added or edited task.
 
-        Args:
-            column_name: The name of the column where the task was added
-                or edited.
-            new_task: The task that was added or edited.
+        This is used to reselect the task in the list view after the edit
+        screen is closed and the list view is recreated.
+
+        Parameters
+        ----------
+        column_name : str
+            The name of the column where the task was added or edited.
+        new_task : Task
+            The task that was added or edited.
         """
         tasks = self.tasks_model.tasks[column_name]
 
@@ -200,8 +223,10 @@ class TasksController:
         """
         Recreates the list view for the specified column name.
 
-        Args:
-            column_name: The name of the column to recreate the list view for.
+        Parameters
+        ----------
+        column_name : str
+            The name of the column to recreate the list view for.
         """
         # Remove all items
         tasks_tab = self.main_tabs.tasks_tab
@@ -219,8 +244,10 @@ class TasksController:
         Re-selects the item in the list view that was selected before the popup
         was shown or the item that was just created.
 
-        Args:
-            column_name: The name of the column to reselect the item in.
+        Parameters
+        ----------
+        list_view_name : str
+            The name of the column to reselect the item in.
         """
         config: Config = Config.instance                    # type: ignore
         tasks_controller = self.tuido_app.tasks_controller  # type: ignore
@@ -240,9 +267,13 @@ class TasksController:
     -> None:
         """
         Focuses the specified list view and selects the specified index.
-        Args:
-            list_view: The list view to be focused.
-            selected_index: The index of the item to be selected.
+
+        Parameters
+        ----------
+        list_view : ListView
+            The list view to be focused.
+        selected_index : int
+            The index of the item to be selected.
         """
         # Workaround to trigger the on_focus event of the list view
         # This is necessary to ensure the list view is focused correctly
@@ -261,8 +292,10 @@ class TasksController:
         """
         Moves the selected task to the left or right column.
 
-        Args:
-            move_direction: The direction to move the task (left or right).
+        Parameters
+        ----------
+        move_direction : TaskMoveDirection
+            The direction to move the task (left or right).
         """
         # Determine the index of the source column
         source_column_name = self.main_tabs.tasks_tab.selected_column_name
@@ -326,8 +359,10 @@ class TasksController:
         """
         Selects the left or right column/list view in the tasks tab.
 
-        Args:
-            direction: Which direction to focus to (left or right).
+        Parameters
+        ----------
+        direction : TaskMoveDirection
+            Which direction to focus to (left or right).
         """
         tasks_tab = self.main_tabs.tasks_tab
         list_views = tasks_tab.list_views
@@ -385,10 +420,14 @@ class TasksController:
         """
         Selects a task in the specified list view.
 
-        Args:
-            task_index: The index of the task to select.
-            list_length: The length of the list to ensure the index is valid.
-            column_name: The name of the column/list view to select the task in.
+        Parameters
+        ----------
+        task_index : int
+            The index of the task to select.
+        list_length : int
+            The length of the list to ensure the index is valid.
+        column_name : str
+            The name of the column/list view to select the task in.
         """
         if list_length > 0:
             new_index = min(task_index, list_length - 1)

@@ -27,14 +27,22 @@ class Task:
     """
     Model for a task.
 
-    Attributes:
-        column_name: The name of the column the task belongs to.
-        description: The description of the task.
-        priority: The priority of the task.
-        start_date: The start date of the task in "YYYY-MM-DD" format.
-        end_date: The end date of the task in "YYYY-MM-DD" format.
-        days_to_start: The number of days until the start date.
-        days_to_end: The number of days until the end date.
+    Attributes
+    ----------
+    column_name : str
+        The name of the column the task belongs to.
+    description : str
+        The description of the task.
+    priority : TaskPriority
+        The priority of the task.
+    start_date : str
+        The start date of the task in "YYYY-MM-DD" format.
+    end_date : str
+        The end date of the task in "YYYY-MM-DD" format.
+    days_to_start : int | None
+        The number of days until the start date.
+    days_to_end : int | None
+        The number of days until the end date.
     """
     column_name: str
     description: str
@@ -52,11 +60,16 @@ class Tasks(metaclass=Singleton):
     The tasks are loaded from the JSON file specified by json_path.
     The JSON file is created if it does not exist.
 
-    Attributes:
-        json_path: The path to the JSON file containing the tasks data.
-        column_names: A list of column names.
-        column_captions: A dictionary mapping column names to their captions.
-        tasks: A dictionary mapping column names to lists of Task objects.
+    Attributes
+    ----------
+    json_path : str
+        The path to the JSON file containing the tasks data.
+    column_names : list[str]
+        A list of column names.
+    column_captions : dict[str, str]
+        A dictionary mapping column names to their captions.
+    tasks : dict[str, list[Task]]
+        A dictionary mapping column names to lists of Task objects.
     """
     json_path: str
     column_names: list[str]
@@ -68,8 +81,10 @@ class Tasks(metaclass=Singleton):
         """
         Initializes the Tasks model.
 
-        Args:
-            json_path: The path to the JSON file containing the tasks data.
+        Parameters
+        ----------
+        json_path : str
+            The path to the JSON file containing the tasks data.
         """
         self.json_path = json_path
 
@@ -101,8 +116,10 @@ class Tasks(metaclass=Singleton):
         """
         Generates a dictionary of tasks from the raw data.
 
-        Args:
-            tasks_raw: The raw data loaded from the JSON file.
+        Parameters
+        ----------
+        tasks_raw : dict
+            The raw data loaded from the JSON file.
         """
         for column_name, tasks_list in tasks_raw.items():
             self.tasks[column_name] = []
@@ -118,7 +135,6 @@ class Tasks(metaclass=Singleton):
         """
         Sorts the tasks in each column by priority, start date (missing goes
         to end), end date (missing goes to end) and description.
-        and description.
         """
         MAX_DATE = datetime(3000, 1, 1).timestamp()
 
@@ -137,11 +153,16 @@ class Tasks(metaclass=Singleton):
         """
         Creates a Task object from raw data.
 
-        Args:
-            column_name: The name of the column the task belongs to.
-            task_dict: The raw data dictionary containing task information.
+        Parameters
+        ----------
+        column_name : str
+            The name of the column the task belongs to.
+        task_dict : dict[str, str]
+            The raw data dictionary containing task information.
 
-        Returns:
+        Returns
+        -------
+        Task
             A Task object created from the raw data.
         """
         return Task(
@@ -159,11 +180,16 @@ class Tasks(metaclass=Singleton):
         """
         Adds a task to the tasks dictionary from raw data.
 
-        Args:
-            column_name: The name of the column the task belongs to.
-            task_dict: The raw data dictionary containing task information.
+        Parameters
+        ----------
+        column_name : str
+            The name of the column the task belongs to.
+        task_dict : dict[str, str]
+            The raw data dictionary containing task information.
 
-        Returns:
+        Returns
+        -------
+        Task
             The Task object that was added to the tasks dictionary.
         """
         # Create task object and add it to the tasks dictionary
@@ -183,9 +209,12 @@ class Tasks(metaclass=Singleton):
         """
         Deletes a task from the tasks dictionary.
 
-        Args:
-            column_name: The name of the column the task belongs to.
-            task_index: The index of the task to be deleted.
+        Parameters
+        ----------
+        column_name : str
+            The name of the column the task belongs to.
+        task_index : int
+            The index of the task to be deleted.
         """
         if column_name in self.tasks and 0 <= task_index < len(self.tasks[column_name]):
             del self.tasks[column_name][task_index]
@@ -195,10 +224,14 @@ class Tasks(metaclass=Singleton):
         """
         Converts a number to a TaskPriority enum.
 
-        Args:
-            num: The number to convert.
+        Parameters
+        ----------
+        priority_number : int
+            The number to convert.
 
-        Returns:
+        Returns
+        -------
+        TaskPriority
             The corresponding TaskPriority enum.
         """
         match priority_number:
@@ -213,13 +246,17 @@ class Tasks(metaclass=Singleton):
 
     def priority_str_to_num(self, priority_string: str) -> int:
         """
-        Converts a number to a TaskPriority enum.
+        Converts a priority string to a number.
 
-        Args:
-            num: The number to convert.
+        Parameters
+        ----------
+        priority_string : str
+            The priority string to convert.
 
-        Returns:
-            The corresponding TaskPriority enum.
+        Returns
+        -------
+        int
+            The corresponding priority number.
         """
         match str(priority_string).upper():
             case 'HIGH':
@@ -235,11 +272,15 @@ class Tasks(metaclass=Singleton):
         """
         Calculates the number of days to a given date.
 
-        Args:
-            date_str: The date string in the format "YYYY-MM-DD".
+        Parameters
+        ----------
+        date_str : str
+            The date string in the format "YYYY-MM-DD".
 
-        Returns:
-            The number of days to the given date.
+        Returns
+        -------
+        int | None
+            The number of days to the given date, or None if the date is invalid.
         """
         timestamp = DateTime.date_to_timestamp(date_str, english_format=True)
 
@@ -265,6 +306,11 @@ class Tasks(metaclass=Singleton):
         Returns a cleaned version of the tasks dictionary.
 
         The cleaned version contains only the not computed fields for each task.
+
+        Returns
+        -------
+        dict[str, list[dict[str, str | int]]]
+            A cleaned version of the tasks dictionary.
         """
         cleaned_tasks_dict = {}
         for column_name, tasks_list in self.tasks.items():

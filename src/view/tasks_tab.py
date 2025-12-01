@@ -23,12 +23,16 @@ class CustomListView(ListView):
 
     This is a workaround until the ListView is fixed.
 
-    Attributes:
-        vertical_scroll: The parent container that is scrolled.
-        tasks_tab: The TasksTab object that contains the list of tasks.
-        column_name: The name of the column the ListView belongs to.
-        loop_behavior: Determines if the list view should loop when reaching
-            the end.
+    Attributes
+    ----------
+    vertical_scroll : VerticalScroll
+        The parent container that is scrolled.
+    tasks_tab : TasksTab
+        The TasksTab object that contains the list of tasks.
+    column_name : str
+        The name of the column the ListView belongs to.
+    loop_behavior : bool
+        Determines if the list view should loop when reaching the end.
     """
     vertical_scroll: VerticalScroll
     tasks_tab: TasksTab
@@ -41,12 +45,21 @@ class CustomListView(ListView):
         """
         Initializes the CustomListView.
 
-        Args:
-            vscroll: The parent container that is scrolled.
-            loop_behavior: Determines if the list view should loop when
-                reaching the end.
-            *args: Positional arguments for the ListView.
-            **kwargs: Keyword arguments for the ListView.
+        Parameters
+        ----------
+        vertical_scroll : VerticalScroll
+            The parent container that is scrolled.
+        tasks_tab : TasksTab
+            The TasksTab object that contains the list of tasks.
+        column_name : str
+            The name of the column the ListView belongs to.
+        loop_behavior : bool, optional
+            Determines if the list view should loop when reaching the end
+            (default is True).
+        *args
+            Positional arguments for the ListView.
+        **kwargs
+            Keyword arguments for the ListView.
         """
         super().__init__(*args, **kwargs)
         self.vertical_scroll = vertical_scroll
@@ -59,8 +72,10 @@ class CustomListView(ListView):
         """
         Handles key events for the ListView.
 
-        Args:
-            event: The key event that occurred.
+        Parameters
+        ----------
+        event : Key
+            The key event that occurred.
         """
         loop_applied = self._enable_loop_behavior(event)
         self._scroll_to_selected_item(event, loop_applied)
@@ -75,10 +90,14 @@ class CustomListView(ListView):
         If the user presses the down key at the bottom of the list, the
         selection moves to the top of the list.
 
-        Args:
-            event: The key event that occurred.
+        Parameters
+        ----------
+        event : Key
+            The key event that occurred.
 
-        Returns:
+        Returns
+        -------
+        bool
             A boolean indicating whether loop behavior was applied.
         """
         # Abort if loop behavior is disabled or other key than up/down pressed
@@ -112,13 +131,17 @@ class CustomListView(ListView):
     def _scroll_to_selected_item(self, event: Key, loop_applied: bool) -> None:
         """
         Scrolls the parent container to maintain the currently selected item
-        in view if the up or down key was pressed. Furthermore, updates the
-        class of the currently selected item and updates the selected item
-        information in the TasksTab.
+        in view if the up or down key was pressed.
 
-        Args:
-            event: The key event that occurred.
-            loop_applied: Indicates whether loop behavior was applied.
+        Furthermore, updates the class of the currently selected item and
+        updates the selected item information in the TasksTab.
+
+        Parameters
+        ----------
+        event : Key
+            The key event that occurred.
+        loop_applied : bool
+            Indicates whether loop behavior was applied.
         """
         # Get index of the currently selected item
         index = self.index or 0
@@ -149,6 +172,11 @@ class CustomListView(ListView):
         This method is called to update the class of the currently selected item
         in the ListView. It removes the 'selected' class from all items and adds
         'selected' class to the currently selected item.
+
+        Parameters
+        ----------
+        index : int
+            The index of the currently selected item.
         """
         for i, item in enumerate(self.children):
             if isinstance(item, ListItem):
@@ -164,6 +192,11 @@ class CustomListView(ListView):
         This method is called when the ListView gains focus. It adds
         the 'selected' class to the currently selected item and removes it
         from all other items.
+
+        Parameters
+        ----------
+        event : Focus
+            The focus event.
         """
         for item in self.children:
             item.remove_class('selected')
@@ -179,6 +212,11 @@ class CustomListView(ListView):
         This method is called when the ListView loses focus. It removes the
         'selected' class from all items to indicate that no item is currently
         selected.
+
+        Parameters
+        ----------
+        event : Blur
+            The blur event.
         """
         for item in self.children:
             item.remove_class('selected')
@@ -188,15 +226,22 @@ class CustomListView(ListView):
         Handles the selection event for the ListView.
 
         This method is called when an item in the ListView is selected with
-        the cursor. It adds  the 'selected' class to the currently selected
+        the cursor. It adds the 'selected' class to the currently selected
         item and removes it from all other items.
 
-        Note:
-            Function definition equivalent to:
-            ```
+        Parameters
+        ----------
+        event : ListView.Selected
+            The selection event.
+
+        Notes
+        -----
+        Function definition equivalent to:
+
+        .. code-block:: python
+
             @on(ListView.Selected)
             def ...
-            ```
         """
         for item in self.children:
             item.remove_class('selected')
@@ -221,15 +266,24 @@ class TasksTab(Static):
     list format. The `CustomListView` is a subclass of `ListView` that scrolls
     its parent container (`VerticalScroll`) instead of scrolling itself.
 
-    Attributes:
-        tuido_app: The main application instance.
-        list_views: A dictionary of CustomListView objects for each column.
-        column_names: A list of column names.
-        column_captions: A dictionary mapping column names to their captions.
-        tasks: A dictionary mapping column names to lists of Task objects.
-        input_form: The input form for adding or editing tasks.
-        selected_column_name: The name of the currently selected column.
-        selected_task_index: The index of the currently selected task.
+    Attributes
+    ----------
+    tuido_app : App
+        The main application instance.
+    list_views : dict[str, CustomListView]
+        A dictionary of CustomListView objects for each column.
+    column_names : list[str]
+        A list of column names.
+    column_captions : dict[str, str]
+        A dictionary mapping column names to their captions.
+    tasks : dict[str, list[Task]]
+        A dictionary mapping column names to lists of Task objects.
+    input_form : TasksInputPopup
+        The input form for adding or editing tasks.
+    selected_column_name : str
+        The name of the currently selected column.
+    selected_task_index : int
+        The index of the currently selected task.
     """
     tuido_app: App
     list_views: dict[str, CustomListView] = {}
@@ -245,8 +299,12 @@ class TasksTab(Static):
         """
         Initializes the TasksTab with the main application instance.
 
-        Args:
-            app: The main application instance.
+        Parameters
+        ----------
+        tuido_app : App
+            The main application instance.
+        **kwargs
+            Additional keyword arguments.
         """
         super().__init__(**kwargs)
         self.tuido_app = tuido_app
@@ -254,6 +312,11 @@ class TasksTab(Static):
     def compose(self) -> ComposeResult:
         """
         Composes the tasks tab content.
+
+        Returns
+        -------
+        ComposeResult
+            The composed child widgets.
         """
         with Horizontal():
             for column_name in self.column_names:
@@ -278,8 +341,10 @@ class TasksTab(Static):
         """
         Handles key events for the ListView.
 
-        Args:
-            event: The key event that occurred.
+        Parameters
+        ----------
+        event : Key
+            The key event that occurred.
         """
         if event.key == 'enter':
             self.tuido_app.action_tasks_edit()
@@ -293,12 +358,15 @@ class TasksTab(Static):
         The start date and end date are color-coded based on the number of
         days until the date.
 
-        Args:
-            column_name: The name of the column to create ListItems for.
+        Parameters
+        ----------
+        column_name : str
+            The name of the column to create ListItems for.
 
-        Returns:
-            list_items: A list of ListItem objects representing the tasks in
-                        the column.
+        Returns
+        -------
+        list[ListItem]
+            A list of ListItem objects representing the tasks in the column.
         """
         # Return empty list if the column doesn't have any tasks
         list_items: list[ListItem] = []
@@ -351,8 +419,15 @@ class TasksTab(Static):
         If the date is not set, it returns None for the text and an empty
         style string.
 
-        Args:
-            task: The task object.
+        Parameters
+        ----------
+        task : Task
+            The task object.
+
+        Returns
+        -------
+        tuple[str | None, str]
+            A tuple containing the start date text and style.
         """
         start_date_text = None
         start_date_style = ''
@@ -385,8 +460,15 @@ class TasksTab(Static):
         If the date is not set, it returns None for the text and an empty
         style string.
 
-        Args:
-            task: The task object.
+        Parameters
+        ----------
+        task : Task
+            The task object.
+
+        Returns
+        -------
+        tuple[str | None, str]
+            A tuple containing the end date text and style.
         """
         end_date_text = None
         end_date_style = ''
@@ -412,9 +494,12 @@ class TasksTab(Static):
             - Medium priority: 'task_prio_medium'
             - Low priority: 'task_prio_low'
 
-        Args:
-            list_item: The ListItem to set the class for.
-            task: The task object.
+        Parameters
+        ----------
+        list_item : ListItem
+            The ListItem to set the class for.
+        task : Task
+            The task object.
         """
         match task.priority:
             case TaskPriority.HIGH:

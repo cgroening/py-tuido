@@ -86,6 +86,16 @@ tasks:
     description: → Col
     tooltip: Select the right column
     show: false
+  - key: k
+    action: select_upper_task
+    description: ↑ Task
+    tooltip: Select the previous task
+    show: false
+  - key: j
+    action: select_lower_task
+    description: ↓ Task
+    tooltip: Select the next task
+    show: false
 
 topics:
   - key: f1

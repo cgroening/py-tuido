@@ -24,7 +24,7 @@ from view.main_view import MainTabs
 from view.tasks_tab_edit_screen import TaskEditScreen
 from controller.topics_controller import TopicsController
 from controller.tasks_controller import TasksController, TaskAction, \
-                                        TaskMoveDirection
+                                        TaskMoveDirection, TaskSelectDirection
 from controller.notes_controller import NotesController
 
 
@@ -337,6 +337,18 @@ class TuidoApp(App):
         Moves the currently selected task to the right column.
         """
         self.tasks_controller.select_previous_or_next_column(TaskMoveDirection.RIGHT)
+
+    def action_tasks_select_upper_task(self) -> None:
+        """
+        Selects the task above the currently selected one.
+        """
+        self.tasks_controller.select_upper_lower_task(TaskSelectDirection.UP)
+
+    def action_tasks_select_lower_task(self) -> None:
+        """
+        Selects the task below the currently selected one.
+        """
+        self.tasks_controller.select_upper_lower_task(TaskSelectDirection.DOWN)
 
     @work
     async def action_tasks_delete(self) -> None:

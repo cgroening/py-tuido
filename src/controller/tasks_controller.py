@@ -18,6 +18,11 @@ class TaskAction(enum.Enum):
     EDIT = 'edit'
 
 
+class TaskSelectDirection(enum.Enum):
+    UP = -1
+    DOWN = 1
+
+
 class TaskMoveDirection(enum.Enum):
     LEFT = -1
     RIGHT = 1
@@ -390,6 +395,23 @@ class TasksController:
             if len(list_view.children) > 0:
                 list_view.focus()
                 break
+
+    def select_upper_lower_task(self, direction: TaskSelectDirection) -> None:
+        """
+        Selects the task above or below the currently selected one.
+        """
+        tasks_tab = self.main_tabs.tasks_tab
+        column_name = tasks_tab.selected_column_name
+        selected_task_index = tasks_tab.selected_task_index
+        list_view_len = len(self.tasks_model.tasks[column_name])
+
+        # Calculate the new task index
+        new_task_index = Utils.next_index(
+            selected_task_index, list_view_len, direction.value
+        )
+
+        # Update the selected task index and recreate the list view
+        self._select_task(new_task_index, list_view_len, column_name)
 
     def delete_selected_task(self) -> None:
         """

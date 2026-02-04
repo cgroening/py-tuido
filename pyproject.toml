@@ -1,3 +1,15 @@
+[project]
+name = "tuido"
+version = "0.1.0"
+dependencies = [
+    "textual",
+    "pyyaml",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [tool.mypy]
 ignore_missing_imports = true
 disable_error_code = ["annotation-unchecked"]

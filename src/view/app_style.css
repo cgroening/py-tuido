@@ -90,34 +90,34 @@ ListView ListItem.task_prio_none {
 
 ListView ListItem.task_prio_high.selected {
     background: $error-muted 60%;
-    /* border: outer $error; */
+    border: outer $error;
     /* border: heavy $error; */
-    border-top: thick $error;
-    border-bottom: thick $error;
+    /* border-top: thick $error; */
+    /* border-bottom: thick $error; */
 }
 
 ListView ListItem.task_prio_medium.selected {
     background: $warning-muted 50%;
-    /* border: outer $warning; */
+    border: outer $warning;
     /* border: heavy $warning; */
-    border-top: thick $warning;
-    border-bottom: thick $warning;
+    /* border-top: thick $warning; */
+    /* border-bottom: thick $warning; */
 }
 
 ListView ListItem.task_prio_low.selected {
     background: $success-muted 50%;
-    /* border: outer $success; */
+    border: outer $success;
     /* border: heavy $success; */
-    border-top: thick $success;
-    border-bottom: thick $success;
+    /* border-top: thick $success; */
+    /* border-bottom: thick $success; */
 }
 
 ListView ListItem.task_prio_none.selected {
     background: $primary-muted;
-    /* border: outer $success; */
+    border: outer $success;
     /* border: heavy $success; */
-    border-top: thick $primary 75%;
-    border-bottom: thick $primary 75%;
+    /* border-top: thick $primary 75%; */
+    /* border-bottom: thick $primary 75%; */
 }
 
 /* TasksInputPopup {

@@ -101,7 +101,7 @@ Whether it's meeting notes, rough ideas, phone numbers or spontaneous thoughts �
 - Jot down ideas or thoughts throughout the day
 - Take notes during meetings or calls
 - Use Markdown to structure ad-hoc content (e.g. TODO lists, outlines)
-- Store temporary content that doesn’t need to be kept long-term
+- Store temporary content that doesn't need to be kept long-term
 
 Notes are intended to be transient – they're not part of a long-term knowledge base. If something becomes important or structured, move it to a Topic or Task.
 

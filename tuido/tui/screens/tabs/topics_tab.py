@@ -186,15 +186,8 @@ class TopicsTab(Static):
         self._sort_table()
         self.topics_table.select_first_row()
 
-    def save_topic(self, input_query_func) -> None:
-        """
-        Read all input widgets and save the currently selected topic.
-
-        Parameters
-        ----------
-        input_query_func : Callable
-            A function that takes a CSS selector and returns the widget.
-        """
+    def save_topic(self) -> None:
+        """Read all input widgets and save the currently selected topic."""
         topic_id = self.topics_table.get_current_id()
         if topic_id is None:
             return
@@ -207,16 +200,16 @@ class TopicsTab(Static):
             match field.type:
                 case FieldType.STRING:
                     if field.lines == 1:
-                        widget: Input = input_query_func(widget_id)
+                        widget: Input = self.query_one(widget_id)
                         value = widget.value
                     else:
-                        widget: TextArea = input_query_func(widget_id)
+                        widget: TextArea = self.query_one(widget_id)
                         value = widget.text
                 case FieldType.SELECT:
-                    widget: Select = input_query_func(widget_id)
+                    widget: Select = self.query_one(widget_id)
                     value = '' if widget.value == Select.BLANK else widget.value
                 case _:
-                    widget: Input = input_query_func(widget_id)
+                    widget: Input = self.query_one(widget_id)
                     value = widget.value
 
             updated_topic[field.name] = value
@@ -226,12 +219,10 @@ class TopicsTab(Static):
                 col_counter += 1
 
         self._service.update_topic(topic_id, updated_topic)
-        self.update_input_fields(input_query_func)
+        self.update_input_fields()
         logging.info(f'TopicsTab: saved topic id={topic_id}.')
 
-    def update_input_fields(
-        self, input_query_func, called_from_discard: bool = False
-    ) -> None:
+    def update_input_fields(self, called_from_discard: bool = False) -> None:
         """Fill form inputs from the currently selected topic."""
         topic_id = self.topics_table.get_current_id()
         try:
@@ -247,13 +238,13 @@ class TopicsTab(Static):
                     self.programmatically_changed_inputs.add(
                         f'topics_{col.name}_input'
                     )
-                self._set_input_value(col, value, input_query_func)
+                self._set_input_value(col, value)
             except Exception as e:
                 if not self.app_startup and not called_from_discard:
                     self.programmatically_changed_inputs.add(
                         f'topics_{col.name}_input'
                     )
-                self._set_input_value(col, '', input_query_func)
+                self._set_input_value(col, '')
                 logging.warning(
                     f'TopicsTab: input update failed for id={topic_id}, '
                     f'field={col.name}: {e}'
@@ -270,25 +261,24 @@ class TopicsTab(Static):
     #  Private helpers                                                     #
     # ------------------------------------------------------------------ #
 
-    def _set_input_value(
-        self, field: FieldDefinition, value: str, query_func
-    ) -> None:
+    def _set_input_value(self, field: FieldDefinition, value: str) -> None:
+        sel = f'#topics_{field.name}_input'
         match field.type:
             case FieldType.STRING:
                 if field.lines == 1:
-                    w: Input = query_func(f'#topics_{field.name}_input')
+                    w: Input = self.query_one(sel)
                     w.value = value
                 else:
-                    w: TextArea = query_func(f'#topics_{field.name}_input')
+                    w: TextArea = self.query_one(sel)
                     w.text = value
             case FieldType.SELECT:
-                w: Select = query_func(f'#topics_{field.name}_input')
+                w: Select = self.query_one(sel)
                 if value == '':
                     w.clear()
                 else:
                     w.value = value
             case _:
-                w: Input = query_func(f'#topics_{field.name}_input')
+                w: Input = self.query_one(sel)
                 w.value = value
 
     def _update_table_cell(self, col_index: int, value: str) -> None:

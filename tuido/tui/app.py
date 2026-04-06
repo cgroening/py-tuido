@@ -149,11 +149,11 @@ class TuidoApp(App):
 
     def action_globalalways_previous_tab(self) -> None:
         from textual.widgets import Tabs
-        self.query_one('#main_tabs', Tabs).action_previous_tab()
+        self._main_screen.query_one('#main_tabs', Tabs).action_previous_tab()
 
     def action_globalalways_next_tab(self) -> None:
         from textual.widgets import Tabs
-        self.query_one('#main_tabs', Tabs).action_next_tab()
+        self._main_screen.query_one('#main_tabs', Tabs).action_next_tab()
 
     # ------------------------------------------------------------------ #
     #  Tasks actions                                                       #
@@ -246,15 +246,15 @@ class TuidoApp(App):
         topics_tab.create_new_topic()
 
     def action_topics_focus_table(self) -> None:
-        table = self.query_one('#topics_table', DataTable)
+        table = self._main_screen.query_one('#topics_table', DataTable)
         self.set_focus(table)
         self.notify('Topics table focused!')
 
     def action_topics_save(self) -> None:
         topics_tab = self._get_topics_tab()
-        topics_tab.save_topic(lambda sel: self.query_one(sel))
+        topics_tab.save_topic()
         for field in list(topics_tab.user_changed_inputs):
-            self.query_one(f'#{field}').remove_class('changed-input')
+            topics_tab.query_one(f'#{field}').remove_class('changed-input')
         topics_tab.topics_table.disabled = False
         topics_tab.user_changed_inputs.clear()
         self.notify('Topic updated!')
@@ -263,11 +263,9 @@ class TuidoApp(App):
     async def action_topics_discard(self) -> None:
         if await self.push_screen_wait(QuestionScreen('Really discard changes?')):
             topics_tab = self._get_topics_tab()
-            topics_tab.update_input_fields(
-                lambda sel: self.query_one(sel), called_from_discard=True
-            )
+            topics_tab.update_input_fields(called_from_discard=True)
             for field in list(topics_tab.user_changed_inputs):
-                self.query_one(f'#{field}').remove_class('changed-input')
+                topics_tab.query_one(f'#{field}').remove_class('changed-input')
             topics_tab.topics_table.disabled = False
             topics_tab.user_changed_inputs.clear()
             self.notify('Changes discarded!')
@@ -289,16 +287,19 @@ class TuidoApp(App):
     # ------------------------------------------------------------------ #
 
     def action_notes_show_textarea(self) -> None:
-        self.query_one('#notes_textarea', TextArea).remove_class('hidden')
-        self.query_one('#notes_markdown').add_class('hidden')
+        notes_tab = self._main_screen.notes_tab
+        notes_tab.query_one('#notes_textarea', TextArea).remove_class('hidden')
+        notes_tab.query_one('#notes_markdown').add_class('hidden')
 
     def action_notes_show_md(self) -> None:
-        self.query_one('#notes_textarea', TextArea).add_class('hidden')
-        self.query_one('#notes_markdown').remove_class('hidden')
+        notes_tab = self._main_screen.notes_tab
+        notes_tab.query_one('#notes_textarea', TextArea).add_class('hidden')
+        notes_tab.query_one('#notes_markdown').remove_class('hidden')
 
     def action_notes_show_textarea_and_md(self) -> None:
-        self.query_one('#notes_textarea', TextArea).remove_class('hidden')
-        self.query_one('#notes_markdown').remove_class('hidden')
+        notes_tab = self._main_screen.notes_tab
+        notes_tab.query_one('#notes_textarea', TextArea).remove_class('hidden')
+        notes_tab.query_one('#notes_markdown').remove_class('hidden')
 
     # ------------------------------------------------------------------ #
     #  Input-change tracking for topics (unchanged / changed highlighting) #
@@ -332,7 +333,7 @@ class TuidoApp(App):
         self, event: DataTable.RowHighlighted
     ) -> None:
         topics_tab = self._get_topics_tab()
-        topics_tab.update_input_fields(lambda sel: self.query_one(sel))
+        topics_tab.update_input_fields()
         topics_tab.app_startup = False
 
     def _compare_input_to_original(

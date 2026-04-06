@@ -1,12 +1,6 @@
 {
     "inbox": [
         {
-            "description": "Research user onboarding best practices",
-            "priority": 1,
-            "start_date": "2025-06-01",
-            "end_date": "2025-06-02"
-        },
-        {
             "description": "Draft wireframes for new dashboard layout",
             "priority": 1,
             "start_date": "2025-06-03",
@@ -55,6 +49,12 @@
             "priority": 1,
             "start_date": "2025-05-12",
             "end_date": "2025-05-12"
+        },
+        {
+            "description": "Research user onboarding best practices",
+            "priority": 1,
+            "start_date": "2025-06-01",
+            "end_date": "2025-06-02"
         },
         {
             "description": "Prepare changelog for v2.1.0 release",

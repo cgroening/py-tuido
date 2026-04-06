@@ -1,0 +1,68 @@
+import logging
+import threading
+import time
+
+from tuido.storage.notes.base import BaseNotesRepository
+
+
+class NotesService:
+    """
+    Service for notes management with throttle/debounce auto-save.
+
+    The service holds the current text in memory and saves it to the
+    repository with two complementary mechanisms:
+
+    - **Throttle:** saves at most once per ``throttle_interval`` seconds
+      while the user is actively typing.
+    - **Debounce:** saves once the user has stopped typing for
+      ``debounce_interval`` seconds.
+    """
+
+    THROTTLE_INTERVAL: float = 5.0
+    DEBOUNCE_INTERVAL: float = 5.0
+
+    _repo: BaseNotesRepository
+    _notes: str
+    _last_throttle: float
+    _debounce_timer: threading.Timer | None
+    _lock: threading.Lock
+
+
+    def __init__(self, repo: BaseNotesRepository) -> None:
+        self._repo = repo
+        self._notes = repo.load()
+        self._last_throttle = 0.0
+        self._debounce_timer = None
+        self._lock = threading.Lock()
+
+    def get_notes(self) -> str:
+        """Return the current in-memory notes text."""
+        return self._notes
+
+    def on_text_changed(self, text: str) -> None:
+        """
+        Called whenever the notes textarea content changes.
+
+        Applies throttle and debounce logic and saves asynchronously.
+        """
+        now = time.time()
+
+        if now - self._last_throttle >= self.THROTTLE_INTERVAL:
+            self._save(text, 'throttle')
+            self._last_throttle = now
+
+        if self._debounce_timer:
+            self._debounce_timer.cancel()
+
+        self._debounce_timer = threading.Timer(
+            self.DEBOUNCE_INTERVAL, self._save, args=(text, 'debounce')
+        )
+        self._debounce_timer.start()
+
+    def _save(self, text: str, reason: str) -> None:
+        if self._notes != text:
+            self._notes = text
+            self._repo.save(text)
+            logging.info(
+                f'[{time.strftime("%X")}] [{reason}] Notes saved.'
+            )

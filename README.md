@@ -12,7 +12,7 @@ The purpose of this application is to provide a space for planning and organizin
 
 Use Tuido for everything that is relevant today but can be deleted in the next few days. Tuido aims to help you separate temporary stuff from your personal knowledge management.
 
-> [!warning]
+> [!important]
 > This application is under development. It's not yet suitable for a productive environment.
 
 See the [Roadmap](#roadmap) and [Todo list](TODO.md) to gain an insight into the current project status.

@@ -1,3 +1,4 @@
+import logging
 import platform
 import os
 import shutil
@@ -5,10 +6,18 @@ import typer
 from pathlib import Path
 from typing import Annotated, Optional
 from termz.util.logger import setup_logging
+from termz.io.app_state_storage import AppStateStorage
 from tuido import PACKAGE_NAME
 
 
 _BUNDLED_DATA_DIR = Path(__file__).parent / 'sample_data'
+
+
+# Setup logging and application state storage
+setup_logging('termplate')
+logger = logging.getLogger(__name__)
+logger.info('App is starting...')
+_ = AppStateStorage(package_name=PACKAGE_NAME)
 
 
 def _get_config_dir() -> Path:

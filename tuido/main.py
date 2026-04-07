@@ -30,12 +30,13 @@ _ = AppStateStorage(package_name=PACKAGE_NAME)
 
 # Dependency composition: Wire all layers together
 _config_repo    = YamlConfigRepository()
-_config_service = ConfigService(_config_repo)
 _task_repo      = JsonTaskRepository()
-_tasks_service  = TasksService(_task_repo, _config_service)
 _topic_repo     = JsonTopicRepository()
-_topics_service = TopicsService(_topic_repo, _config_service)
 _notes_repo     = MarkdownNotesRepository()
+
+_config_service = ConfigService(_config_repo)
+_tasks_service  = TasksService(_task_repo, _config_service)
+_topics_service = TopicsService(_topic_repo, _config_service)
 _notes_service  = NotesService(_notes_repo)
 
 app = typer.Typer(help=f'{APP_TITLE} - {APP_SUB_TITLE}')
@@ -55,6 +56,7 @@ def default(
         ),
     ),
     custom_data_dir: Path | None = typer.Option(
+        None,
         '-D', '--data-folder',
         metavar='DIR',
         help=(

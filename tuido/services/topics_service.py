@@ -1,6 +1,6 @@
 import logging
 
-from pylightlib.msc.DateTime import DateTime  # type: ignore
+from termz.util.datetime import today_date  # type: ignore
 
 from tuido.domain.models import FieldDefinition
 from tuido.services.config_service import ConfigService
@@ -108,7 +108,7 @@ class TopicsService:
         self, topic: dict, action: str
     ) -> dict:
         """Apply 'created_date' / 'edit_date' computed fields."""
-        today = DateTime.today_date(english_format=True)
+        today = today_date(english_format=True)
         columns_dict: dict[str, FieldDefinition] = \
             self._config.get_columns_dict()
 

@@ -5,7 +5,7 @@ from textual.containers import HorizontalGroup, VerticalGroup, VerticalScroll
 from textual.widgets import Static, DataTable, Input, Label, Select, TextArea
 from rich.text import Text
 
-from pylightlib.textual.custom_data_table import CustomDataTable  # type: ignore
+from termz.tui.custom_widgets.custom_data_table import CustomDataTable  # type: ignore
 
 from tuido.domain.models import FieldDefinition, FieldType
 from tuido.services.config_service import ConfigService

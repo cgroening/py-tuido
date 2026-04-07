@@ -7,7 +7,7 @@ from textual.events import Key, Focus, Blur
 from textual.widgets import Static, ListView, ListItem, Label
 from rich.text import Text
 
-from pylightlib.msc.Utils import Utils  # type: ignore
+from termz.util.index import next_index  # type: ignore
 
 from tuido.domain.models import Task, TaskPriority
 from tuido.services.tasks_service import TasksService
@@ -54,7 +54,7 @@ class CustomListView(ListView):
         if current_index not in list_bounds:
             return False
         direction = -1 if event.key == 'up' else 1
-        new_index = Utils.next_index(
+        new_index = next_index(
             current_index,
             len(self.children),
             direction=direction,

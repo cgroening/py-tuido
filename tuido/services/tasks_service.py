@@ -1,7 +1,9 @@
 import logging
 from datetime import datetime
 
-from pylightlib.msc.DateTime import DateTime  # type: ignore
+from termz.util.datetime import (  # type: ignore
+    date_to_timestamp, date_diff, today_timestamp
+)
 
 from tuido.domain.models import Task, TaskPriority
 from tuido.services.config_service import ConfigService
@@ -197,14 +199,14 @@ class TasksService:
         MAX_DATE = datetime(3000, 1, 1).timestamp()
         self._tasks[column_name].sort(key=lambda t: (
             t.priority.value,
-            DateTime.date_to_timestamp(t.start_date, english_format=True) or MAX_DATE,
-            DateTime.date_to_timestamp(t.end_date,   english_format=True) or MAX_DATE,
+            date_to_timestamp(t.start_date, english_format=True) or MAX_DATE,
+            date_to_timestamp(t.end_date,   english_format=True) or MAX_DATE,
             t.description.lower()
         ))
 
     @staticmethod
     def _days_to(date_str: str) -> int | None:
-        ts = DateTime.date_to_timestamp(date_str, english_format=True)
+        ts = date_to_timestamp(date_str, english_format=True)
         if ts:
-            return DateTime.date_diff(ts, DateTime.today_timestamp())
+            return date_diff(ts, today_timestamp())
         return None

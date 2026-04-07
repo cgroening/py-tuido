@@ -4,11 +4,10 @@ from pathlib import Path
 
 from textual import work
 from textual.app import App, ComposeResult
-from textual.reactive import reactive
 from textual.widgets import DataTable, Input, Select, TextArea
 
-from pylightlib.textual.question_screen import QuestionScreen  # type: ignore
-from pylightlib.textual.theme_loader import ThemeLoader         # type: ignore
+from termz.tui.question_screen import QuestionScreen  # type: ignore
+from termz.tui.theme_loader import ThemeLoader        # type: ignore
 
 from tuido import APP_TITLE
 from tuido.services.config_service import ConfigService
@@ -51,9 +50,6 @@ class TuidoApp(App):
     _main_screen: MainScreen
     _task_action: str  # 'new' | 'edit'
     _index_of_edited_task: int
-
-    escape_pressed_twice = reactive(False, bindings=True)
-
 
     def __init__(
         self,
@@ -111,47 +107,30 @@ class TuidoApp(App):
             active_group = 'tasks'
         return CUSTOM_BINDINGS.handle_check_action(
             action=action,
-            parameters=parameters,
+            _parameters=parameters,
             active_group=active_group,
-            show_global_keys=bool(self.escape_pressed_twice),
         )
 
     # ------------------------------------------------------------------ #
-    #  Copy / paste (injected by CustomBindings)                          #
+    #  Global actions (themes + tab navigation)                           #
     # ------------------------------------------------------------------ #
 
-    async def action_global_copy_widget_value_to_clipboard(self) -> None:
-        CUSTOM_BINDINGS.handle_copy_widget_value_to_clipboard(self)
-
-    async def action_global_copy_selection_to_clipboard(self) -> None:
-        CUSTOM_BINDINGS.handle_copy_selection_to_clipboard_action(self)
-
-    async def action_global_paste_from_clipboard(self) -> None:
-        CUSTOM_BINDINGS.handle_paste_from_clipboard(self)
-
-    async def action_global_replace_widget_value_from_clipboard(self) -> None:
-        CUSTOM_BINDINGS.handle_paste_from_clipboard(self, replace=True)
-
-    # ------------------------------------------------------------------ #
-    #  Global-always actions (themes + tab navigation)                    #
-    # ------------------------------------------------------------------ #
-
-    def action_globalalways_next_theme(self) -> None:
+    def action_next_theme(self) -> None:
         theme_loader.change_to_next_or_previous_theme(1, self)
 
-    def action_globalalways_prev_theme(self) -> None:
+    def action_prev_theme(self) -> None:
         theme_loader.change_to_next_or_previous_theme(-1, self)
 
-    def action_globalalways_toggle_dark(self) -> None:
+    def action_toggle_dark(self) -> None:
         self.theme = (
             'textual-dark' if self.theme == 'textual-light' else 'textual-light'
         )
 
-    def action_globalalways_previous_tab(self) -> None:
+    def action_previous_tab(self) -> None:
         from textual.widgets import Tabs
         self._main_screen.query_one('#main_tabs', Tabs).action_previous_tab()
 
-    def action_globalalways_next_tab(self) -> None:
+    def action_next_tab(self) -> None:
         from textual.widgets import Tabs
         self._main_screen.query_one('#main_tabs', Tabs).action_next_tab()
 
@@ -440,7 +419,7 @@ class TuidoApp(App):
 
     def _select_adjacent_column(self, direction: int) -> None:
         """Move focus to the nearest non-empty column."""
-        from pylightlib.msc.Utils import Utils  # type: ignore
+        from termz.util.index import next_index  # type: ignore
 
         tasks_tab   = self._get_tasks_tab()
         list_views  = tasks_tab.list_views
@@ -463,7 +442,7 @@ class TuidoApp(App):
 
     def _select_adjacent_task(self, direction: int) -> None:
         """Select the task above (direction=-1) or below (+1)."""
-        from pylightlib.msc.Utils import Utils  # type: ignore
+        from termz.util.index import next_index  # type: ignore
 
         tasks_tab = self._get_tasks_tab()
         col       = tasks_tab.selected_column_name
@@ -473,6 +452,6 @@ class TuidoApp(App):
         if length == 0:
             return
 
-        new_index = Utils.next_index(index, length, direction)
+        new_index = next_index(index, length, direction)
         self._index_of_edited_task = new_index
         tasks_tab.select_task(col, new_index)

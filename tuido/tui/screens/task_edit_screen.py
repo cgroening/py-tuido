@@ -12,7 +12,7 @@ from textual.message import Message
 from textual.screen import ModalScreen
 from textual.widgets import Input, Label, Select, MaskedInput, ListView, Static, Footer
 
-from pylightlib.textual.question_screen import QuestionScreen  # type: ignore
+from termz.tui.question_screen import QuestionScreen  # type: ignore
 
 from tuido.domain.models import Task, TaskPriority
 

@@ -2,7 +2,8 @@ from textual.app import ComposeResult
 from textual.containers import Container
 from textual.reactive import reactive
 from textual.screen import Screen
-from textual.widgets import Footer, Header, Tabs, Tab
+from textual.widgets import Header, Tabs, Tab
+from termz.tui.custom_widgets.multiline_footer import MultiLineFooter  # type: ignore
 
 from tuido import APP_ICON
 from tuido.services.config_service import ConfigService
@@ -65,9 +66,7 @@ class MainScreen(Screen):
             yield self.tasks_tab
             yield self.topics_tab
             yield self.notes_tab
-        footer = Footer(show_command_palette=False)
-        footer.compact = True
-        yield footer
+        yield MultiLineFooter(show_command_palette=False, compact=True)
 
     def on_mount(self) -> None:
         """Initialise the topics table after all widgets are mounted."""

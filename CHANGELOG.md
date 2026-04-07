@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-–
+- Multi-row footer: bindings can now specify a `row` field in `bindings.yaml` to control which footer row they appear in
 
 ### Changed
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-–
+- Theme switcher key bindings now work correctly
 
 ## [0.1.0] – 2026-04-07
 

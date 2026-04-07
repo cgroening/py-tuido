@@ -17,13 +17,13 @@ _global:
     tooltip: Quit the app
     show: true
     row: 0
-  - key: j
+  - key: o
     action: prev_theme
     description: Previous Theme
     tooltip: Activate the previous color theme
     show: true
     row: 0
-  - key: k
+  - key: p
     action: next_theme
     description: Next Theme
     tooltip: Activate the next color theme

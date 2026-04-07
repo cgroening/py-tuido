@@ -7,7 +7,15 @@ from pathlib import Path
 from typing import Annotated, Optional
 from termz.util.logger import setup_logging
 from termz.io.app_state_storage import AppStateStorage
-from tuido import PACKAGE_NAME
+from tuido import PACKAGE_NAME, APP_TITLE, APP_SUB_TITLE
+from tuido.services.config_service  import ConfigService
+from tuido.services.tasks_service   import TasksService
+from tuido.services.topics_service  import TopicsService
+from tuido.services.notes_service   import NotesService
+from tuido.storage.config.yaml      import YamlConfigRepository
+from tuido.storage.tasks.json       import JsonTaskRepository
+from tuido.storage.topics.json      import JsonTopicRepository
+from tuido.storage.notes.md         import MarkdownNotesRepository
 
 
 _BUNDLED_DATA_DIR = Path(__file__).parent.parent / 'sample_data'
@@ -19,6 +27,68 @@ logger = logging.getLogger(__name__)
 logger.info('App is starting...')
 _ = AppStateStorage(package_name=PACKAGE_NAME)
 
+# Dependency composition: Wire all layers together
+# --- Resolve config dir ---
+if config:
+    config_dir = config
+else:
+    config_dir = _get_config_dir()
+    _ensure_config_exists(config_dir)
+    config_path = config_dir / 'config.yaml'
+
+    # --- Resolve data dir ---
+    if data_folder:
+        data_dir = data_folder
+    else:
+        data_dir = _get_data_dir()
+        _ensure_data_dir_exists(data_dir)
+
+    config_repo = YamlConfigRepository(str(config_path))
+    task_repo   = JsonTaskRepository(str(data_dir / 'tasks.json'))
+    topic_repo  = JsonTopicRepository(str(data_dir / 'topics.json'))
+    notes_repo  = MarkdownNotesRepository(str(data_dir / 'notes.md'))
+
+    config_service  = ConfigService(config_repo)
+    tasks_service   = TasksService(task_repo, config_service)
+    topics_service  = TopicsService(topic_repo, config_service)
+    notes_service   = NotesService(notes_repo)
+
+    # --- Bindings ---
+    from tuido.tui import bindings as _bindings
+_bindings.init(config_path.parent / 'bindings.yaml')
+
+
+app = typer.Typer(help=f'{APP_TITLE} - {APP_SUB_TITLE}')
+
+
+@app.callback(invoke_without_command=True)
+def default(
+    ctx: typer.Context,
+    config: Path | None = typer.Option(
+        None,
+        '-C', '--config',
+        metavar='DIR',
+        help=(
+            'Folder containing config.yaml and bindings.yaml '
+            '(default: ~/.config/tuido/ on macOS/Linux, '
+            '%APPDATA%\\tuido\\ on Windows)'
+        ),
+    ),
+    data_folder: Annotated[Optional[Path], typer.Option(
+        '-D', '--data-folder',
+        metavar='DIR',
+        help=(
+            'Folder containing tasks.json, topics.json, notes.md '
+            '(default: ~/.local/share/tuido/ on macOS/Linux, '
+            '%LOCALAPPDATA%\\tuido\\ on Windows)'
+        ),
+    )] = None,
+):
+    if config:
+        _config_storage.set_config_path(config)
+
+    from tuido.tui.app import TuidoApp
+    TuidoApp(config_service, tasks_service, topics_service, notes_service).run()
 
 def _get_config_dir() -> Path:
     """Returns the platform-appropriate user config directory."""
@@ -56,82 +126,5 @@ def _ensure_data_dir_exists(data_dir: Path) -> None:
             shutil.copy(_BUNDLED_DATA_DIR / filename, dest)
 
 
-_app = typer.Typer(name=PACKAGE_NAME, add_completion=False)
-
-
-@_app.command()
-def _run(
-    config: Annotated[Optional[Path], typer.Option(
-        '-C', '--config',
-        metavar='DIR',
-        help=(
-            'Folder containing config.yaml and bindings.yaml '
-            '(default: ~/.config/tuido/ on macOS/Linux, '
-            '%APPDATA%\\tuido\\ on Windows)'
-        ),
-    )] = None,
-    data_folder: Annotated[Optional[Path], typer.Option(
-        '-D', '--data-folder',
-        metavar='DIR',
-        help=(
-            'Folder containing tasks.json, topics.json, notes.md '
-            '(default: ~/.local/share/tuido/ on macOS/Linux, '
-            '%LOCALAPPDATA%\\tuido\\ on Windows)'
-        ),
-    )] = None,
-) -> None:
-    setup_logging(PACKAGE_NAME)
-
-    # --- Resolve config dir ---
-    if config:
-        config_dir = config
-    else:
-        config_dir = _get_config_dir()
-        _ensure_config_exists(config_dir)
-    config_path = config_dir / 'config.yaml'
-
-    # --- Resolve data dir ---
-    if data_folder:
-        data_dir = data_folder
-    else:
-        data_dir = _get_data_dir()
-        _ensure_data_dir_exists(data_dir)
-
-    # --- Storage layer ---
-    from tuido.storage.config.yaml import YamlConfigRepository
-    from tuido.storage.tasks.json  import JsonTaskRepository
-    from tuido.storage.topics.json_ import JsonTopicRepository
-    from tuido.storage.notes.md     import MarkdownNotesRepository
-
-    config_repo = YamlConfigRepository(str(config_path))
-    task_repo   = JsonTaskRepository(str(data_dir / 'tasks.json'))
-    topic_repo  = JsonTopicRepository(str(data_dir / 'topics.json'))
-    notes_repo  = MarkdownNotesRepository(str(data_dir / 'notes.md'))
-
-    # --- Service layer ---
-    from tuido.services.config_service  import ConfigService
-    from tuido.services.tasks_service   import TasksService
-    from tuido.services.topics_service  import TopicsService
-    from tuido.services.notes_service   import NotesService
-
-    config_service  = ConfigService(config_repo)
-    tasks_service   = TasksService(task_repo, config_service)
-    topics_service  = TopicsService(topic_repo, config_service)
-    notes_service   = NotesService(notes_repo)
-
-    # --- Bindings ---
-    from tuido.tui import bindings as _bindings
-    _bindings.init(config_path.parent / 'bindings.yaml')
-
-    # --- TUI layer ---
-    from tuido.tui.app import TuidoApp
-
-    TuidoApp(config_service, tasks_service, topics_service, notes_service).run()
-
-
 def main() -> None:
-    _app()
-
-
-if __name__ == '__main__':
-    main()
+    app()

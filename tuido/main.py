@@ -1,20 +1,10 @@
-"""
-Composition root for the Tuido application.
-
-Wires all layers together (storage → services → TUI) and launches
-the Textual app. This is the only place where concrete implementations
-are instantiated; every other module depends on abstractions.
-"""
 import platform
 import os
 import shutil
+import typer
 from pathlib import Path
 from typing import Annotated, Optional
-
-import typer
-
-from termz.util.logger import setup_logging  # type: ignore
-
+from termz.util.logger import setup_logging
 from tuido import PACKAGE_NAME
 
 

@@ -1,11 +1,55 @@
 [project]
 name = "tuido"
-version = "0.2.0"
+version = "0.1.0"
+authors = [
+    { name = "Corvin Gröning" }
+]
+description = "A terminal-based tasks and personal information manager."
+keywords = ["terminal", "tasks", "personal information manager", "TUI"]
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Environment :: Console",
+]
 dependencies = [
     "textual",
     "pyyaml",
     "typer",
 ]
+
+[project.urls]
+Homepage = "https://github.com/cgroening/py-tuido"
+Repository = "https://github.com/cgroening/py-tuido"
+Changelog = "https://github.com/cgroening/py-tuido/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0",
+    "pytest-cov>=7.0",
+    "coverage>=7.13.4"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+exclude = [
+    "**/.*",
+    "**/__pycache__",
+    "**/*.pyc",
+    ".venv",
+    "venv",
+    "**/node_modules",
+]
+reportUnannotatedClassAttribute = "none"
+reportUnusedCallResult = "none"
+reportCallInDefaultInitializer = "none"
+reportImplicitOverride = "none"
+reportMissingTypeStubs = "none"
+reportImplicitStringConcatenation = "none"
 
 [project.scripts]
 tuido = "tuido.main:main"
@@ -23,6 +67,5 @@ packages = ["tuido"]
 "tuido/sample_data/topics.json"  = "tuido/sample_data/topics.json"
 "tuido/sample_data/notes.md"     = "tuido/sample_data/notes.md"
 
-[tool.mypy]
-ignore_missing_imports = true
-disable_error_code = ["annotation-unchecked"]
+[tool.pytest.ini_options]
+testpaths = ["termplate/tests"]

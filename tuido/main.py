@@ -37,11 +37,11 @@ def _get_data_dir() -> Path:
     return base / PACKAGE_NAME
 
 
-def _ensure_config_exists(config_path: Path) -> None:
+def _ensure_config_exists(config_dir: Path) -> None:
     """Copy bundled default config files to user config dir on first run."""
-    config_path.parent.mkdir(parents=True, exist_ok=True)
+    config_dir.mkdir(parents=True, exist_ok=True)
     for filename in ('config.yaml', 'bindings.yaml'):
-        dest = config_path.parent / filename
+        dest = config_dir / filename
         if not dest.exists():
             shutil.copy(_BUNDLED_DATA_DIR / filename, dest)
 
@@ -62,11 +62,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog=PACKAGE_NAME)
     parser.add_argument(
         '-C', '--config', type=str, default=None,
-        metavar='PATH',
+        metavar='DIR',
         help=(
-            'Path to config.yaml '
-            '(default: ~/.config/tuido/config.yaml on macOS/Linux, '
-            '%%APPDATA%%\\tuido\\config.yaml on Windows)'
+            'Folder containing config.yaml and bindings.yaml '
+            '(default: ~/.config/tuido/ on macOS/Linux, '
+            '%%APPDATA%%\\tuido\\ on Windows)'
         ),
     )
     parser.add_argument(
@@ -80,12 +80,13 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    # --- Resolve config path ---
+    # --- Resolve config dir ---
     if args.config:
-        config_path = Path(args.config)
+        config_dir = Path(args.config)
     else:
-        config_path = _get_config_dir() / 'config.yaml'
-        _ensure_config_exists(config_path)
+        config_dir = _get_config_dir()
+        _ensure_config_exists(config_dir)
+    config_path = config_dir / 'config.yaml'
 
     # --- Resolve data dir ---
     if args.data_folder:

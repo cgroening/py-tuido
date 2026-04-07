@@ -250,41 +250,61 @@ tasks:
 
 ### Version 0.1 – Foundation
 
-- [x] Basis topic management (CRUD)
+- [x] Basic topic management (CRUD)
 - [x] Basic task management (CRUD)
 - [x] Basic note taking
+- [x] Custom keyboard shortcuts via config
 
 ### Version 0.2 – Usability Enhancements
 
-- [ ] Custom sort order for topics
+- [ ] Custom sort order for tasks (by priority, date or manual)
+- [ ] Custom sort order for topics (by specified column or manual)
 - [ ] Filtering and searching topics
+- [ ] Filtering and searching tasks
 
-### Version 0.3 – Interoperability
+### Version 0.3 – CLI and Fast Capture
 
-- [ ] Import and export tasks as CSV
-- [ ] Import and export topics as CSV
+- [ ] `tuido add task ...`: Quick-add via CLI (add a task to inbox, append to notes, or create a topic without opening the TUI)
+- [ ] `tuido status`: Quick-summary (show a summary of today's and tomorrows's tasks in the terminal without opening the TUI)
 
-### Version 0.4 – Extended Customization
+### Version 0.4 – More Field Types & Customization
 
 - [ ] More field types for topics: `bool`, `multiselect`, `number`
-- [ ] Custom keyboard shortcuts via config
+- [ ] New field type `markdown` with toggle between raw and rendered view
 
 ### Version 0.5 – Advanced Workflow
 
+- [ ] Open text fields in an external editor (e.g. Neovim)
+- [ ] Add a notes field to tasks with Markdown rendering support
 - [ ] Task history/changelog
 - [ ] Duplicate task/topic
 
 ### Version 0.6 - Smart Fields
 
-- [ ] Validations for topic fields
-- [ ] More field functions for topics
+- [ ] Field validations: define rules for topic fields beyond basic types, such as email format, date ranges or numeric ranges (e.g 1–100)
+- [ ] More computed field functions (currently: `created_date`, `edit_date`) planned addition: `sequence_number` and user requested functions)
+- [ ] Field formulas: derive a field's value from other fields using a simple expression (e.g. `folder = project_number + "/" + project_name`)
 
 ### Version 0.7 - Polished UI
 
 - [ ] Compact mode which removes the inner spacing of input widgets
+- [ ] Task count per Kanban column
+
+### Version 0.8 – Interoperability
+
+- [ ] Import and export tasks as CSV
+- [ ] Import and export topics as CSV
+- [ ] Export tasks, topics and notes as Markdown file
 
 ### Possible Future Features
 
-- [ ] Multilingual support
-- [ ] Time tracking per task
+The following features are planned but not yet assigned to a specific version.
+
+- [ ] Suggest next task based on priority and due date
 - [ ] Task recurrence (e.g. daily, weekly tasks)
+- [ ] Time tracking per task
+- [ ] Multi-project support with separate configs and data per project
+- [ ] Undo last change
+- [ ] Archive for completed tasks
+- [ ] Date picker widgets
+- [ ] Bulk operations: actions on multiple tasks at once

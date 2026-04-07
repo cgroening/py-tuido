@@ -6,36 +6,65 @@ the Textual app. This is the only place where concrete implementations
 are instantiated; every other module depends on abstractions.
 """
 import argparse
-import logging
+import platform
+import os
+import shutil
 from pathlib import Path
 
+from termz.util.logger import setup_logging  # type: ignore
 
-SCRIPT_DIR = Path(__file__).parent.parent
-LOG_DIR    = SCRIPT_DIR / 'log'
-LOG_FILE   = LOG_DIR / 'info.log'
+from tuido import PACKAGE_NAME
 
 
-def _setup_logging() -> None:
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(
-        filename=LOG_FILE,
-        filemode='w',
-        level=logging.DEBUG,
-        format='%(asctime)s [%(levelname)s] %(message)s',
-    )
+_BUNDLED_CONFIG = Path(__file__).parent / 'data' / 'config.yaml'
+
+
+def _get_config_dir() -> Path:
+    """Returns the platform-appropriate user config directory."""
+    if platform.system() == 'Windows':
+        base = Path(os.environ.get('APPDATA', Path.home()))
+    else:
+        base = Path.home() / '.config'
+    return base / PACKAGE_NAME
+
+
+def _ensure_config_exists(config_path: Path) -> None:
+    """Copy bundled default config to user config dir on first run."""
+    if not config_path.exists():
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(_BUNDLED_CONFIG, config_path)
 
 
 def main() -> None:
-    _setup_logging()
+    setup_logging(PACKAGE_NAME)
 
-    # --- Parse optional --data_folder argument ---
-    parser = argparse.ArgumentParser(prog='tuido')
+    # --- Parse arguments ---
+    parser = argparse.ArgumentParser(prog=PACKAGE_NAME)
+    parser.add_argument(
+        '--config', type=str, default=None,
+        metavar='PATH',
+        help=(
+            'Path to config.yaml '
+            '(default: ~/.config/tuido/config.yaml on macOS/Linux, '
+            '%%APPDATA%%\\tuido\\config.yaml on Windows)'
+        ),
+    )
     parser.add_argument(
         '--data_folder', type=str, default='data',
-        help='Folder containing config.yaml, tasks.json, topics.json, notes.md'
+        metavar='DIR',
+        help='Folder containing tasks.json, topics.json, notes.md (default: data/)',
     )
     args = parser.parse_args()
-    data_dir = SCRIPT_DIR / args.data_folder
+
+    # --- Resolve config path ---
+    if args.config:
+        config_path = Path(args.config)
+    else:
+        config_path = _get_config_dir() / 'config.yaml'
+        _ensure_config_exists(config_path)
+
+    # --- Resolve data dir ---
+    data_dir = Path(__file__).parent.parent / args.data_folder
 
     # --- Storage layer ---
     from tuido.storage.config.yaml_ import YamlConfigRepository
@@ -43,7 +72,7 @@ def main() -> None:
     from tuido.storage.topics.json_ import JsonTopicRepository
     from tuido.storage.notes.md     import MarkdownNotesRepository
 
-    config_repo = YamlConfigRepository(str(data_dir / 'config.yaml'))
+    config_repo = YamlConfigRepository(str(config_path))
     task_repo   = JsonTaskRepository(str(data_dir / 'tasks.json'))
     topic_repo  = JsonTopicRepository(str(data_dir / 'topics.json'))
     notes_repo  = MarkdownNotesRepository(str(data_dir / 'notes.md'))
@@ -62,8 +91,7 @@ def main() -> None:
     # --- TUI layer ---
     from tuido.tui.app import TuidoApp
 
-    app = TuidoApp(config_service, tasks_service, topics_service, notes_service)
-    app.run()
+    TuidoApp(config_service, tasks_service, topics_service, notes_service).run()
 
 
 if __name__ == '__main__':

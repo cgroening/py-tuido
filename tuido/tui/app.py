@@ -432,7 +432,7 @@ class TuidoApp(App):
         current_index = col_names.index(current_col)
 
         while True:
-            current_index = Utils.next_index(
+            current_index = next_index(
                 current_index, len(col_names), direction
             )
             col = col_names[current_index]

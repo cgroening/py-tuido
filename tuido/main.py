@@ -116,6 +116,10 @@ def main() -> None:
     topics_service  = TopicsService(topic_repo, config_service)
     notes_service   = NotesService(notes_repo)
 
+    # --- Bindings ---
+    from tuido.tui import bindings as _bindings
+    _bindings.init(config_path.parent / 'bindings.yaml')
+
     # --- TUI layer ---
     from tuido.tui.app import TuidoApp
 

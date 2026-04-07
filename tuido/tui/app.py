@@ -333,7 +333,7 @@ class TuidoApp(App):
         if widget.id is None or not widget.id.startswith('topics_'):
             return
 
-        if current_val == Select.BLANK:
+        if current_val is Select.NULL:
             current_val = ''
 
         topics_tab = self._get_topics_tab()

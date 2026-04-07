@@ -207,7 +207,7 @@ class TopicsTab(Static):
                         value = widget.text
                 case FieldType.SELECT:
                     widget: Select = self.query_one(widget_id)
-                    value = '' if widget.value == Select.BLANK else widget.value
+                    value = '' if widget.value is Select.NULL else widget.value
                 case _:
                     widget: Input = self.query_one(widget_id)
                     value = widget.value

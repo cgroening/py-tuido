@@ -11,12 +11,6 @@ _global:
     tooltip: Select the next tab
     show: true
     row: 0
-  - key: z
-    action: toggle_dark
-    description: Lights
-    tooltip: Toggle between dark and light mode
-    show: true
-    row: 0
   - key: strl+q
     action: quit
     description: Quit

@@ -121,11 +121,6 @@ class TuidoApp(App):
     def action_prev_theme(self) -> None:
         theme_loader.change_to_next_or_previous_theme(-1, self)
 
-    def action_toggle_dark(self) -> None:
-        self.theme = (
-            'textual-dark' if self.theme == 'textual-light' else 'textual-light'
-        )
-
     def action_previous_tab(self) -> None:
         from textual.widgets import Tabs
         self._main_screen.query_one('#main_tabs', Tabs).action_previous_tab()

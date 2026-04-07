@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Theme switcher key bindings now work correctly
+- Selected color for tasks without priority now uses the correct border color (`$primary` instead of `$success`)
 
 ## [0.1.0] – 2026-04-07
 

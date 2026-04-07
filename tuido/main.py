@@ -5,11 +5,13 @@ Wires all layers together (storage → services → TUI) and launches
 the Textual app. This is the only place where concrete implementations
 are instantiated; every other module depends on abstractions.
 """
-import argparse
 import platform
 import os
 import shutil
 from pathlib import Path
+from typing import Annotated, Optional
+
+import typer
 
 from termz.util.logger import setup_logging  # type: ignore
 
@@ -55,42 +57,43 @@ def _ensure_data_dir_exists(data_dir: Path) -> None:
             shutil.copy(_BUNDLED_DATA_DIR / filename, dest)
 
 
-def main() -> None:
-    setup_logging(PACKAGE_NAME)
+_app = typer.Typer(name=PACKAGE_NAME, add_completion=False)
 
-    # --- Parse arguments ---
-    parser = argparse.ArgumentParser(prog=PACKAGE_NAME)
-    parser.add_argument(
-        '-C', '--config', type=str, default=None,
+
+@_app.command()
+def _run(
+    config: Annotated[Optional[Path], typer.Option(
+        '-C', '--config',
         metavar='DIR',
         help=(
             'Folder containing config.yaml and bindings.yaml '
             '(default: ~/.config/tuido/ on macOS/Linux, '
-            '%%APPDATA%%\\tuido\\ on Windows)'
+            '%APPDATA%\\tuido\\ on Windows)'
         ),
-    )
-    parser.add_argument(
-        '-D', '--data_folder', type=str, default=None,
+    )] = None,
+    data_folder: Annotated[Optional[Path], typer.Option(
+        '-D', '--data-folder',
         metavar='DIR',
         help=(
             'Folder containing tasks.json, topics.json, notes.md '
             '(default: ~/.local/share/tuido/ on macOS/Linux, '
-            '%%LOCALAPPDATA%%\\tuido\\ on Windows)'
+            '%LOCALAPPDATA%\\tuido\\ on Windows)'
         ),
-    )
-    args = parser.parse_args()
+    )] = None,
+) -> None:
+    setup_logging(PACKAGE_NAME)
 
     # --- Resolve config dir ---
-    if args.config:
-        config_dir = Path(args.config)
+    if config:
+        config_dir = config
     else:
         config_dir = _get_config_dir()
         _ensure_config_exists(config_dir)
     config_path = config_dir / 'config.yaml'
 
     # --- Resolve data dir ---
-    if args.data_folder:
-        data_dir = Path(args.data_folder)
+    if data_folder:
+        data_dir = data_folder
     else:
         data_dir = _get_data_dir()
         _ensure_data_dir_exists(data_dir)
@@ -125,6 +128,10 @@ def main() -> None:
     from tuido.tui.app import TuidoApp
 
     TuidoApp(config_service, tasks_service, topics_service, notes_service).run()
+
+
+def main() -> None:
+    _app()
 
 
 if __name__ == '__main__':

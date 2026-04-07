@@ -14,8 +14,8 @@ Use Tuido for everything that is relevant today but can be deleted in the next f
 
 > [!important]
 > This application is under development. It's not yet suitable for a productive environment.
-
-See the [Roadmap](#roadmap) and [Todo list](TODO.md) to gain an insight into the current project status.
+>
+> See the [Roadmap](#roadmap) to gain an insight into the current project status.
 
 ## Core Features
 
@@ -24,6 +24,60 @@ See the [Roadmap](#roadmap) and [Todo list](TODO.md) to gain an insight into the
 - Manage tasks in a Kanban system with user-defined columns
 - Manage topics in a simplified database view with customizable fields
 - Quick notes (displayed as text, as rendered Markdown or both)
+
+See [Feature Details](#feature-details) for a more in-depth overview of the features and use cases.
+
+## Installation
+
+### Requirements
+
+See [pyproject.toml](./pyproject.toml).
+
+### Installation via pip
+
+```zsh
+pip install py-tuido
+```
+
+### Installation from Source
+
+```zsh
+git clone https://github.com/cgroening/py-tuido.git
+cd py-tuido
+pip install -e .
+```
+
+Alternatively, tuido can be run without installation, see Section [Without Installation](#without-installation).
+
+## Usage
+
+```zsh
+tuido
+```
+
+On the first run, Tuido creates the config and data directories and copies the default files into them.
+
+**Options:**
+
+| Flag | Description |
+|------|-------------|
+| `-C`, `--config DIR` | Use a custom folder for `config.yaml` and `bindings.yaml` |
+| `-D`, `--data-folder DIR` | Use a custom folder for `tasks.json`, `topics.json` and `notes.md` |
+
+**Default paths:**
+
+| Platform | Config | Data |
+|----------|--------|------|
+| macOS / Linux | `~/.config/tuido/` | `~/.local/share/tuido/` |
+| Windows | `%APPDATA%\tuido\` | `%LOCALAPPDATA%\tuido\` |
+
+### Without Installation
+
+The package can also be run without installation from the project root:
+
+```zsh
+python -m tuido
+```
 
 ## Feature Details
 
@@ -104,6 +158,93 @@ Whether it's meeting notes, rough ideas, phone numbers or spontaneous thoughts �
 - Store temporary content that doesn't need to be kept long-term
 
 Notes are intended to be transient – they're not part of a long-term knowledge base. If something becomes important or structured, move it to a Topic or Task.
+
+## Configuration
+
+All configuration lives in two files inside the config directory.
+
+### `config.yaml`
+
+Defines the structure of topics and the Kanban columns for tasks.
+
+**`fields`** – each entry is a row in the topic form; a row can contain one or more fields side by side:
+
+```yaml
+fields:
+  -
+    - name: "topic"          # internal identifier
+      caption: "Topic"       # displayed label
+      type: "string"         # string | date | select
+      table_column_width: 20 # column width in table view; omit to hide
+  -
+    - name: "status"
+      caption: "Status"
+      type: "select"
+      options: ["Open", "In Progress", "Done"]
+      table_column_width: 11
+    - name: "created"
+      caption: "Created"
+      type: "date"
+      table_column_width: 10
+      input_width: 16        # width of the input widget
+      read_only: true
+      computed: "created_date"  # auto-filled on create: created_date | edit_date
+  -
+    - name: "notes"
+      caption: "Notes"
+      type: "string"
+      lines: -1              # number of lines (-1 = fill available space)
+```
+
+**`task_columns`** – defines the Kanban columns in display order:
+
+```yaml
+task_columns:
+  - name: "inbox"
+    caption: "Inbox"
+  - name: "today"
+    caption: "Today"
+  - name: "done"
+    caption: "Done"
+```
+
+### `bindings.yaml`
+
+Defines keyboard shortcuts. Bindings are grouped by context: `_global`, `tasks`, `topics`, `notes`.
+
+```yaml
+_global:
+  - key: q
+    action: previous_tab
+    description: Tab ←       # shown in the footer
+    tooltip: Select the previous tab
+    show: false              # hide from footer (optional, default: true)
+
+tasks:
+  - key: n
+    action: new
+    description: New
+    tooltip: Create a new task
+```
+
+**Available actions:**
+
+| Context | Action | Description |
+|---------|--------|-------------|
+| `_global` | `previous_tab`, `next_tab` | Switch between tabs |
+| `_global` | `toggle_dark` | Toggle dark/light mode |
+| `_global` | `quit` | Quit the app |
+| `_global` | `prev_theme`, `next_theme` | Cycle color themes |
+| `tasks` | `new`, `edit`, `delete` | Manage tasks |
+| `tasks` | `move_left`, `move_right` | Move task between columns |
+| `tasks` | `select_left_column`, `select_right_column` | Navigate columns |
+| `tasks` | `select_upper_task`, `select_lower_task` | Navigate tasks |
+| `topics` | `new`, `delete` | Manage topics |
+| `topics` | `save`, `discard` | Save or discard edits |
+| `topics` | `focus_table` | Focus the topic list |
+| `notes` | `show_textarea` | Show text editor only |
+| `notes` | `show_md` | Show rendered Markdown only |
+| `notes` | `show_textarea_and_md` | Show editor and preview side by side |
 
 ## Roadmap
 

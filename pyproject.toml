@@ -17,6 +17,7 @@ dependencies = [
     "textual",
     "pyyaml",
     "typer",
+    "termz",
 ]
 
 [project.urls]
@@ -62,10 +63,11 @@ build-backend = "hatchling.build"
 packages = ["tuido"]
 
 [tool.hatch.build.targets.wheel.force-include]
-"sample_data/config.yaml"  = "sample_data/config.yaml"
-"sample_data/tasks.json"   = "sample_data/tasks.json"
-"sample_data/topics.json"  = "sample_data/topics.json"
-"sample_data/notes.md"     = "sample_data/notes.md"
+"sample_data/config.yaml"   = "sample_data/config.yaml"
+"sample_data/bindings.yaml" = "sample_data/bindings.yaml"
+"sample_data/tasks.json"    = "sample_data/tasks.json"
+"sample_data/topics.json"   = "sample_data/topics.json"
+"sample_data/notes.md"      = "sample_data/notes.md"
 
 [tool.pytest.ini_options]
 testpaths = ["tuido/tests"]

@@ -67,8 +67,8 @@ ListView ListItem.task_prio_low {
 }
 
 ListView ListItem.task_prio_none {
-    background: $primary-muted 90%;
-    border: hkey $primary 50%;
+    background: $secondary-muted 90%;
+    border: hkey $secondary 50%;
 }
 
 ListView ListItem.task_prio_high.selected {
@@ -87,8 +87,8 @@ ListView ListItem.task_prio_low.selected {
 }
 
 ListView ListItem.task_prio_none.selected {
-    background: $primary-muted;
-    border: outer $primary;
+    background: $secondary-muted;
+    border: outer $secondary;
 }
 
 /*

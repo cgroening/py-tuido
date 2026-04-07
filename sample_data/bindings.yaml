@@ -3,32 +3,38 @@ _global:
     action: previous_tab
     description: Tab ←
     tooltip: Select the previous tab
-    show: false
+    show: true
+    row: 0
   - key: w
     action: next_tab
     description: Tab →
     tooltip: Select the next tab
-    show: false
+    show: true
+    row: 0
   - key: z
     action: toggle_dark
     description: Lights
     tooltip: Toggle between dark and light mode
-    show: false
+    show: true
+    row: 0
   - key: strl+q
     action: quit
     description: Quit
     tooltip: Quit the app
-    show: false
+    show: true
+    row: 0
   - key: j
     action: prev_theme
     description: Previous Theme
     tooltip: Activate the previous color theme
-    show: false
+    show: true
+    row: 0
   - key: k
     action: next_theme
     description: Next Theme
     tooltip: Activate the next color theme
-    show: false
+    show: true
+    row: 0
 
 # tasks:
 #   - key: f1

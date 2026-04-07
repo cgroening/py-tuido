@@ -10,6 +10,7 @@ from tuido.services.config_service import ConfigService
 from tuido.services.notes_service import NotesService
 from tuido.services.tasks_service import TasksService
 from tuido.services.topics_service import TopicsService
+from tuido.tui.bindings import CUSTOM_BINDINGS
 from tuido.tui.screens.tabs.notes_tab import NotesTab
 from tuido.tui.screens.tabs.tasks_tab import TasksTab
 from tuido.tui.screens.tabs.topics_tab import TopicsTab
@@ -66,7 +67,11 @@ class MainScreen(Screen):
             yield self.tasks_tab
             yield self.topics_tab
             yield self.notes_tab
-        yield MultiLineFooter(show_command_palette=False, compact=True)
+        yield MultiLineFooter(
+            show_command_palette=True,
+            compact=True,
+            row_map=CUSTOM_BINDINGS.get_row_map(for_screen=True),
+        )
 
     def on_mount(self) -> None:
         """Initialise the topics table after all widgets are mounted."""

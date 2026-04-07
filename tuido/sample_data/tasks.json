@@ -1,1 +1,40 @@
-{}
+{
+    "inbox": [
+        {
+            "description": "Read the documentation",
+            "priority": "4",
+            "start_date": "",
+            "end_date": ""
+        },
+        {
+            "description": "Set up development environment",
+            "priority": "2",
+            "start_date": "",
+            "end_date": ""
+        }
+    ],
+    "today": [
+        {
+            "description": "Review open topics",
+            "priority": "1",
+            "start_date": "",
+            "end_date": ""
+        }
+    ],
+    "tomorrow": [
+        {
+            "description": "Write weekly summary",
+            "priority": "3",
+            "start_date": "",
+            "end_date": ""
+        }
+    ],
+    "done": [
+        {
+            "description": "Install tuido",
+            "priority": "4",
+            "start_date": "",
+            "end_date": ""
+        }
+    ]
+}

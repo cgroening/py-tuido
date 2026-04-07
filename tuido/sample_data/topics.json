@@ -1,1 +1,29 @@
-[]
+[
+    {
+        "id": 1,
+        "topic": "Project Setup",
+        "description": "Initial setup of the project environment and tooling.",
+        "status": "Done",
+        "created": "2025-01-01",
+        "edited": "2025-01-01",
+        "actions": "- Install dependencies\n- Configure editor\n- Set up version control"
+    },
+    {
+        "id": 2,
+        "topic": "Feature Planning",
+        "description": "Plan the next set of features for the upcoming release.",
+        "status": "In Progress",
+        "created": "2025-01-05",
+        "edited": "2025-01-05",
+        "actions": "- Collect requirements\n- Prioritize backlog\n- Create tickets"
+    },
+    {
+        "id": 3,
+        "topic": "Documentation",
+        "description": "Write user-facing documentation and update the README.",
+        "status": "Open",
+        "created": "2025-01-10",
+        "edited": "2025-01-10",
+        "actions": "- Draft getting started guide\n- Document keybindings"
+    }
+]

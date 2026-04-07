@@ -21,6 +21,8 @@ class JsonTaskRepository(BaseTaskRepository):
                 f.write('{}')
 
     def load(self) -> dict[str, list[dict]]:
+        if self._path is None:
+            return {}
         with open(self._path, 'r', encoding='utf-8') as f:
             content = f.read().strip()
         if not content:

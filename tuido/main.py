@@ -4,7 +4,6 @@ import os
 import shutil
 import typer
 from pathlib import Path
-from typing import Annotated, Optional
 from termz.util.logger import setup_logging
 from termz.io.app_state_storage import AppStateStorage
 from tuido import PACKAGE_NAME, APP_TITLE, APP_SUB_TITLE
@@ -19,6 +18,8 @@ from tuido.storage.notes.md         import MarkdownNotesRepository
 
 
 _BUNDLED_DATA_DIR = Path(__file__).parent.parent / 'sample_data'
+_config_dir: Path
+_data_dir: Path
 
 
 # Setup logging and application state storage
@@ -27,11 +28,15 @@ logger = logging.getLogger(__name__)
 logger.info('App is starting...')
 _ = AppStateStorage(package_name=PACKAGE_NAME)
 
-#Dependency composition: Wire all layers together
-_config_repo = YamlConfigRepository()
-_task_repo   = JsonTaskRepository()
-_topic_repo  = JsonTopicRepository()
-_notes_repo  = MarkdownNotesRepository()
+# Dependency composition: Wire all layers together
+_config_repo    = YamlConfigRepository()
+_config_service = ConfigService(_config_repo)
+_task_repo      = JsonTaskRepository()
+_tasks_service  = TasksService(_task_repo, _config_service)
+_topic_repo     = JsonTopicRepository()
+_topics_service = TopicsService(_topic_repo, _config_service)
+_notes_repo     = MarkdownNotesRepository()
+_notes_service  = NotesService(_notes_repo)
 
 app = typer.Typer(help=f'{APP_TITLE} - {APP_SUB_TITLE}')
 
@@ -39,7 +44,7 @@ app = typer.Typer(help=f'{APP_TITLE} - {APP_SUB_TITLE}')
 @app.callback(invoke_without_command=True)
 def default(
     ctx: typer.Context,
-    config: Path | None = typer.Option(
+    custom_config_dir: Path | None = typer.Option(
         None,
         '-C', '--config',
         metavar='DIR',
@@ -49,7 +54,7 @@ def default(
             '%APPDATA%\\tuido\\ on Windows)'
         ),
     ),
-    data_folder: Annotated[Optional[Path], typer.Option(
+    custom_data_dir: Path | None = typer.Option(
         '-D', '--data-folder',
         metavar='DIR',
         help=(
@@ -57,37 +62,40 @@ def default(
             '(default: ~/.local/share/tuido/ on macOS/Linux, '
             '%LOCALAPPDATA%\\tuido\\ on Windows)'
         ),
-    )] = None,
+    )
 ):
-    # Resolve config dir
-    config_dir = config if config else _get_config_dir()
-    _ensure_config_exists(config_dir)
-
-    # Resolve data dir
-    data_dir = data_folder if data_folder else _get_data_dir()
-    _ensure_data_dir_exists(data_dir)
+    _resolve_config_and_data_dirs(custom_config_dir, custom_data_dir)
 
     # Set paths on repos
-    _config_repo.set_path(str(config_dir / 'config.yaml'))
-    _task_repo.set_path(str(data_dir / 'tasks.json'))
-    _topic_repo.set_path(str(data_dir / 'topics.json'))
-    _notes_repo.set_path(str(data_dir / 'notes.md'))
+    _config_repo.set_path(str(_config_dir / 'config.yaml'))
+    _task_repo.set_path(str(_data_dir / 'tasks.json'))
+    _topic_repo.set_path(str(_data_dir / 'topics.json'))
+    _notes_repo.set_path(str(_data_dir / 'notes.md'))
 
-    # Wire services
-    config_service  = ConfigService(_config_repo)
-    tasks_service   = TasksService(_task_repo, config_service)
-    topics_service  = TopicsService(_topic_repo, config_service)
-    notes_service   = NotesService(_notes_repo)
+    # Reload services with actual data
+    _tasks_service.load()
+    _topics_service.load()
+    _notes_service.load()
 
-    # Init bindings
-    from tuido.tui import bindings as _bindings
-    _bindings.init(config_dir / 'bindings.yaml')
-
-    from tuido.tui.app import TuidoApp
+    # Start the TUI if no subcommand was invoked
     if ctx.invoked_subcommand is None:
-        TuidoApp(
-            config_service, tasks_service, topics_service, notes_service
-        ).run()
+        _start_tui()
+
+
+def _resolve_config_and_data_dirs(
+    custom_config_dir: Path | None, custom_data_dir: Path | None
+) -> None:
+    """
+    Determine config and data directories, create them if they don't exist
+    and copy default files on first run.
+    """
+    global _config_dir, _data_dir
+
+    _config_dir = custom_config_dir if custom_config_dir else _get_config_dir()
+    _ensure_config_exists(_config_dir)
+
+    _data_dir = custom_data_dir if custom_data_dir else _get_data_dir()
+    _ensure_data_dir_exists(_data_dir)
 
 
 def _get_config_dir() -> Path:
@@ -124,6 +132,17 @@ def _ensure_data_dir_exists(data_dir: Path) -> None:
         dest = data_dir / filename
         if not dest.exists():
             shutil.copy(_BUNDLED_DATA_DIR / filename, dest)
+
+
+def _start_tui() -> None:
+    """Initialize TUI bindings and start the app."""
+    from tuido.tui import bindings as _bindings
+    from tuido.tui.app import TuidoApp
+
+    _bindings.init(_config_dir / 'bindings.yaml')
+    TuidoApp(
+        _config_service, _tasks_service, _topics_service, _notes_service
+    ).run()
 
 
 def main() -> None:

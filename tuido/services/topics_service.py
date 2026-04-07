@@ -34,6 +34,12 @@ class TopicsService:
     #  Public API                                                          #
     # ------------------------------------------------------------------ #
 
+    def load(self) -> None:
+        """Reload topics from the repository."""
+        self._data = []
+        self._topics_by_id = {}
+        self._load()
+
     def get_all_topics(self) -> list[dict]:
         """Return the full in-memory topics list."""
         return self._data

@@ -20,6 +20,8 @@ class MarkdownNotesRepository(BaseNotesRepository):
                 f.write('')
 
     def load(self) -> str:
+        if self._path is None:
+            return ''
         with open(self._path, 'r', encoding='utf-8') as f:
             return f.read()
 

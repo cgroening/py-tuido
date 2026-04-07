@@ -39,6 +39,13 @@ class TasksService:
     #  Public API                                                          #
     # ------------------------------------------------------------------ #
 
+    def load(self) -> None:
+        """Re-read config and reload tasks from the repository."""
+        self._column_names = self._config.get_task_column_names()
+        self._column_captions = self._config.get_task_column_captions()
+        self._tasks = {}
+        self._load()
+
     def get_tasks(self) -> dict[str, list[Task]]:
         """Return the in-memory task store."""
         return self._tasks

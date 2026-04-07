@@ -35,6 +35,10 @@ class NotesService:
         self._debounce_timer = None
         self._lock = threading.Lock()
 
+    def load(self) -> None:
+        """Reload notes from the repository."""
+        self._notes = self._repo.load()
+
     def get_notes(self) -> str:
         """Return the current in-memory notes text."""
         return self._notes

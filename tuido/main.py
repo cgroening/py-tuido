@@ -38,10 +38,12 @@ def _get_data_dir() -> Path:
 
 
 def _ensure_config_exists(config_path: Path) -> None:
-    """Copy bundled default config to user config dir on first run."""
-    if not config_path.exists():
-        config_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy(_BUNDLED_DATA_DIR / 'config.yaml', config_path)
+    """Copy bundled default config files to user config dir on first run."""
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    for filename in ('config.yaml', 'bindings.yaml'):
+        dest = config_path.parent / filename
+        if not dest.exists():
+            shutil.copy(_BUNDLED_DATA_DIR / filename, dest)
 
 
 def _ensure_data_dir_exists(data_dir: Path) -> None:

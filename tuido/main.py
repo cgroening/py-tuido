@@ -98,8 +98,8 @@ def _run(
         _ensure_data_dir_exists(data_dir)
 
     # --- Storage layer ---
-    from tuido.storage.config.yaml_ import YamlConfigRepository
-    from tuido.storage.tasks.json_  import JsonTaskRepository
+    from tuido.storage.config.yaml import YamlConfigRepository
+    from tuido.storage.tasks.json  import JsonTaskRepository
     from tuido.storage.topics.json_ import JsonTopicRepository
     from tuido.storage.notes.md     import MarkdownNotesRepository
 

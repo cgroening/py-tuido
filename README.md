@@ -2,7 +2,7 @@
 
 Tuido is a simple productivity application that provides a text user interface (TUI) for managing tasks, topics and notes. The Kanban columns of the task view and the fields of the topics can be defined by the user. All data are saved locally – no cloud requirement.
 
-![Screenshot](screenshots/app_windows.png)
+![Screenshot](https://raw.githubusercontent.com/cgroening/py-tuido/main/screenshots/app_windows.png)
 
 Many productivity apps offer an overwhelming number of features that you often don't actually need. Their complexity might slow you down. Tuido takes a different approach: minimalism. It gives you a clean, reliable space to plan your day as efficiently as possible.
 

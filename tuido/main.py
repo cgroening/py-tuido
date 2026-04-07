@@ -41,7 +41,7 @@ def main() -> None:
     # --- Parse arguments ---
     parser = argparse.ArgumentParser(prog=PACKAGE_NAME)
     parser.add_argument(
-        '--config', type=str, default=None,
+        '-C', '--config', type=str, default=None,
         metavar='PATH',
         help=(
             'Path to config.yaml '

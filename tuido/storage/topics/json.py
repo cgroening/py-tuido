@@ -10,7 +10,12 @@ class JsonTopicRepository(BaseTopicRepository):
     _path: str
 
 
-    def __init__(self, json_path: str) -> None:
+    def __init__(self, json_path: str | None = None) -> None:
+        self._path = json_path
+        if json_path is not None:
+            self.set_path(json_path)
+
+    def set_path(self, json_path: str) -> None:
         self._path = json_path
         if not os.path.exists(self._path):
             raise TopicsFileNotFoundError(self._path)

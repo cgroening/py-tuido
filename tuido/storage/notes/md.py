@@ -8,7 +8,12 @@ class MarkdownNotesRepository(BaseNotesRepository):
     _path: str
 
 
-    def __init__(self, md_path: str) -> None:
+    def __init__(self, md_path: str | None = None) -> None:
+        self._path = md_path
+        if md_path is not None:
+            self.set_path(md_path)
+
+    def set_path(self, md_path: str) -> None:
         self._path = md_path
         if not os.path.exists(self._path):
             with open(self._path, 'w', encoding='utf-8') as f:

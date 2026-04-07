@@ -20,7 +20,16 @@ class YamlConfigRepository(BaseConfigRepository):
     _task_column_captions: dict[str, str]
 
 
-    def __init__(self, yaml_path: str) -> None:
+    def __init__(self, yaml_path: str | None = None) -> None:
+        self._fields = []
+        self._columns = []
+        self._columns_dict = {}
+        self._task_column_names = []
+        self._task_column_captions = {}
+        if yaml_path is not None:
+            self.set_path(yaml_path)
+
+    def set_path(self, yaml_path: str) -> None:
         if not os.path.exists(yaml_path):
             raise ConfigNotFoundError(yaml_path)
 

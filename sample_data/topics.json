@@ -1,178 +1,29 @@
 [
     {
         "id": 1,
-        "topic": "Project Planning",
-        "description": "Create a detailed project roadmap for Q3.",
-        "status": "Open",
-        "created": "2025-04-01",
-        "edited": "2025-05-08",
-        "actions": ""
+        "topic": "Project Setup",
+        "description": "Initial setup of the project environment and tooling.",
+        "status": "Done",
+        "created": "2025-01-01",
+        "edited": "2025-01-01",
+        "actions": "- Install dependencies\n- Configure editor\n- Set up version control"
     },
     {
         "id": 2,
-        "topic": "Team Meeting",
-        "description": "Weekly sync-up to align on project progress and blockers.",
+        "topic": "Feature Planning",
+        "description": "Plan the next set of features for the upcoming release.",
         "status": "In Progress",
-        "created": "2025-04-03"
+        "created": "2025-01-05",
+        "edited": "2025-01-05",
+        "actions": "- Collect requirements\n- Prioritize backlog\n- Create tickets"
     },
     {
         "id": 3,
-        "topic": "Client Demo",
-        "description": "Prepare and present the product demo to the client.",
-        "status": "Done",
-        "created": "2025-03-28"
-    },
-    {
-        "id": 4,
-        "topic": "Requirements Analysis",
-        "description": "Collect and document user and system requirements.",
-        "status": "In Progress",
-        "created": "2025-04-02"
-    },
-    {
-        "id": 5,
-        "topic": "Marketing Strategy",
-        "description": "Develop a marketing campaign for the new product launch.",
-        "status": "Open",
-        "created": "2025-04-05"
-    },
-    {
-        "id": 6,
-        "topic": "Budget Review",
-        "description": "Analyze current spending and adjust project budget.",
-        "status": "Done",
-        "created": "2025-03-30"
-    },
-    {
-        "id": 8,
-        "topic": "Bug Testing",
-        "description": "Run QA tests on the latest software release.",
-        "status": "Open",
-        "created": "2025-04-06"
-    },
-    {
-        "id": 9,
-        "topic": "Release Planning",
-        "description": "Plan the upcoming release, including scope and timeline.",
-        "status": "In Progress",
-        "created": "2025-04-01"
-    },
-    {
-        "id": 11,
-        "topic": "UI Polish",
-        "description": "Refine UI elements before public release.",
-        "status": "In Progress",
-        "created": "2025-05-08"
-    },
-    {
-        "id": 12,
-        "topic": "Customer Feedback Analysis",
-        "description": "Review feedback from recent surveys.",
-        "status": "Open",
-        "created": "2025-05-08"
-    },
-    {
-        "id": 13,
-        "topic": "Performance Optimization",
-        "description": "Improve backend performance and response times.",
-        "status": "Open",
-        "created": "2025-05-09"
-    },
-    {
-        "id": 14,
-        "topic": "Security Audit",
-        "description": "Conduct an internal audit for security vulnerabilities.",
-        "status": "Planned",
-        "created": "2025-05-10"
-    },
-    {
-        "id": 15,
-        "topic": "Legal Compliance Review",
-        "description": "Ensure all features meet GDPR and other regulations.",
-        "status": "Planned",
-        "created": "2025-05-10"
-    },
-    {
-        "id": 16,
-        "topic": "Internal Training",
-        "description": "Organize training for new team members.",
-        "status": "Open",
-        "created": "2025-05-10"
-    },
-    {
-        "id": 17,
-        "topic": "Design System Update",
-        "description": "Sync components with new branding guidelines.",
-        "status": "In Progress",
-        "created": "2025-05-11"
-    },
-    {
-        "id": 18,
-        "topic": "DevOps Automation",
-        "description": "Automate deployment workflows using GitHub Actions.",
-        "status": "In Progress",
-        "created": "2025-05-11"
-    },
-    {
-        "id": 19,
-        "topic": "New Feature Ideation",
-        "description": "Brainstorm new functionality for Q4 roadmap.",
-        "status": "Open",
-        "created": "2025-05-11"
-    },
-    {
-        "id": 20,
-        "topic": "Third-Party Integration",
-        "description": "Integrate Stripe for payment processing.",
-        "status": "Open",
-        "created": "2025-05-08",
-        "edited": "2025-05-08"
-    },
-    {
-        "id": 21,
-        "topic": "SEO Audit",
-        "description": "Evaluate and improve website SEO scores.",
-        "status": "Planned",
-        "created": "2025-05-07"
-    },
-    {
-        "id": 22,
-        "topic": "Competitor Analysis",
-        "description": "Benchmark features and pricing against competitors.",
-        "status": "In Progress",
-        "created": "2025-05-07"
-    },
-    {
-        "id": 23,
-        "topic": "Blog Content Calendar",
-        "description": "Plan blog posts for the next two months.",
-        "status": "Open",
-        "created": "2025-05-07"
-    },
-    {
-        "id": 24,
-        "topic": "Accessibility Review",
-        "description": "Test interface for WCAG 2.1 compliance.",
-        "status": "In Progress",
-        "created": "2025-05-07",
-        "edited": "2025-05-09"
-    },
-    {
-        "id": 10,
         "topic": "Documentation",
-        "description": "Update and refine technical documentation.",
-        "status": "Done",
-        "created": "2025-03-31",
-        "actions": "2025-04-15: Finalized API documentation\n\n2025-04-10: Updated system architecture diagram\n\n2025-04-05: Added usage examples for new endpoints\n",
-        "edited": "2025-05-12"
-    },
-    {
-        "id": 25,
-        "topic": "Code Cleanup",
-        "description": "Remove deprecated code and unused dependencies.",
+        "description": "Write user-facing documentation and update the README.",
         "status": "Open",
-        "created": "2025-05-07",
-        "edited": "2026-04-06",
-        "actions": ""
+        "created": "2025-01-10",
+        "edited": "2025-01-10",
+        "actions": "- Draft getting started guide\n- Document keybindings"
     }
 ]

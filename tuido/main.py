@@ -10,7 +10,7 @@ from termz.io.app_state_storage import AppStateStorage
 from tuido import PACKAGE_NAME
 
 
-_BUNDLED_DATA_DIR = Path(__file__).parent / 'sample_data'
+_BUNDLED_DATA_DIR = Path(__file__).parent.parent / 'sample_data'
 
 
 # Setup logging and application state storage

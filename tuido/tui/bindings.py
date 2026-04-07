@@ -1,7 +1,7 @@
 from pathlib import Path
 from termz.tui.custom_bindings import CustomBindings  # type: ignore
 
-_BUNDLED_BINDINGS = Path(__file__).parent.parent / 'sample_data' / 'bindings.yaml'
+_BUNDLED_BINDINGS = Path(__file__).parent.parent.parent / 'sample_data' / 'bindings.yaml'
 CUSTOM_BINDINGS = CustomBindings(yaml_file=str(_BUNDLED_BINDINGS))
 
 

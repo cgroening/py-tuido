@@ -1,100 +1,40 @@
 {
     "inbox": [
         {
-            "description": "Draft wireframes for new dashboard layout",
-            "priority": 1,
-            "start_date": "2025-06-03",
-            "end_date": "2025-06-06"
-        },
-        {
-            "description": "Define API endpoints for user authentication",
-            "priority": 2,
-            "start_date": "2025-05-05",
-            "end_date": "2025-05-07"
-        },
-        {
-            "description": "Collect feedback from beta testers",
-            "priority": 2,
-            "start_date": "2025-05-08",
-            "end_date": "2025-05-09"
-        },
-        {
-            "description": "Review latest UI/UX mockups",
-            "priority": 2,
+            "description": "Read the documentation",
+            "priority": "4",
             "start_date": "",
             "end_date": ""
         },
         {
-            "description": "Plan sprint review meeting",
-            "priority": 3,
-            "start_date": "",
-            "end_date": ""
-        },
-        {
-            "description": "Update README with latest setup instructions",
-            "priority": 3,
-            "start_date": "",
-            "end_date": ""
-        },
-        {
-            "description": "Write unit tests for login module",
-            "priority": 3,
+            "description": "Set up development environment",
+            "priority": "2",
             "start_date": "",
             "end_date": ""
         }
     ],
     "today": [
         {
-            "description": "Fix critical bug in payment processing flow",
-            "priority": 1,
-            "start_date": "2025-05-12",
-            "end_date": "2025-05-12"
-        },
-        {
-            "description": "Research user onboarding best practices",
-            "priority": 1,
-            "start_date": "2025-06-01",
-            "end_date": "2025-06-02"
-        },
-        {
-            "description": "Prepare changelog for v2.1.0 release",
-            "priority": 3,
+            "description": "Review open topics",
+            "priority": "1",
             "start_date": "",
             "end_date": ""
         }
     ],
     "tomorrow": [
         {
-            "description": "Deploy staging environment for QA team",
-            "priority": 1,
-            "start_date": "2025-05-13",
-            "end_date": "2025-05-13"
-        },
-        {
-            "description": "Send update email to stakeholders",
-            "priority": 2,
+            "description": "Write weekly summary",
+            "priority": "3",
             "start_date": "",
-            "end_date": "2025-05-13"
-        },
-        {
-            "description": "Test mobile responsiveness of landing page",
-            "priority": 3,
-            "start_date": "2025-05-13",
             "end_date": ""
         }
     ],
     "done": [
         {
-            "description": "Set up project repository and CI/CD pipeline",
-            "priority": 1,
-            "start_date": "2025-04-29",
-            "end_date": "2025-05-01"
-        },
-        {
-            "description": "Initial commit with base app structure",
-            "priority": 2,
-            "start_date": "2025-04-28",
-            "end_date": "2025-04-28"
+            "description": "Install tuido",
+            "priority": "4",
+            "start_date": "",
+            "end_date": ""
         }
     ]
 }

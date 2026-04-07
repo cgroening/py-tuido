@@ -1,6 +1,4 @@
-#_global:
-
-_global_always:
+_global:
   - key: q
     action: previous_tab
     description: Tab ←

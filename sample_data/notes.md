@@ -1,26 +1,17 @@
-# 🧠 Raw Notes – Not Yet Sorted
+# Notes
 
-## 💡 Ideas & Thoughts
+Welcome to **tuido** — your terminal-based task and topic manager.
 
-- *"Smarter workflows. Simpler tools."* ← too generic?
-- Maybe combine **Reports** and **Insights** into one module?
-- Try `framer-motion` for smoother UI animations
+## Keybindings
 
-## 🔍 Questions
+- `q` / `w` — switch tabs
+- `n` — new task or topic
+- `e` — edit selected task
+- `d` — delete selected item
+- `j` / `k` — navigate theme (on tasks tab)
 
-- Is our Slack integration actually used by teams?
-- User feedback: some say onboarding feels *too long* — UX issue?
-- What's better for mobile: **GraphQL** or **REST**?
+## Tips
 
-## ⚠️  Urgent / Follow-up
-
-- **Funding proposal deadline → May 18**
-- Backup DB before Friday’s deployment!
-- Bug with SVG uploads → `500 error` in production 🐞
-
-## 📝 Misc
-
-- Ask design team if dark mode toggle is finalized
-- Metrics dashboard needs mobile optimization
-- "Loading state" still feels clunky — revisit transitions
-- Competitor just launched a similar feature last week!
+- Use the **Topics** tab to track ongoing subjects with a form.
+- Use the **Tasks** tab as a kanban board (Inbox → Today → Tomorrow → Done).
+- Use this **Notes** tab for free-form markdown notes.

@@ -65,17 +65,8 @@ def default(
     )
 ):
     _resolve_config_and_data_dirs(custom_config_dir, custom_data_dir)
-
-    # Set paths on repos
-    _config_repo.set_path(str(_config_dir / 'config.yaml'))
-    _task_repo.set_path(str(_data_dir / 'tasks.json'))
-    _topic_repo.set_path(str(_data_dir / 'topics.json'))
-    _notes_repo.set_path(str(_data_dir / 'notes.md'))
-
-    # Reload services with actual data
-    _tasks_service.load()
-    _topics_service.load()
-    _notes_service.load()
+    _set_repo_paths()
+    _reload_services()
 
     # Start the TUI if no subcommand was invoked
     if ctx.invoked_subcommand is None:
@@ -86,7 +77,7 @@ def _resolve_config_and_data_dirs(
     custom_config_dir: Path | None, custom_data_dir: Path | None
 ) -> None:
     """
-    Determine config and data directories, create them if they don't exist
+    Determines config and data directories, create them if they don't exist
     and copy default files on first run.
     """
     global _config_dir, _data_dir
@@ -96,6 +87,24 @@ def _resolve_config_and_data_dirs(
 
     _data_dir = custom_data_dir if custom_data_dir else _get_data_dir()
     _ensure_data_dir_exists(_data_dir)
+
+
+def _set_repo_paths() -> None:
+    """
+    Sets the resolved config and data paths on the repositories.
+    """
+    _config_repo.set_path(str(_config_dir / 'config.yaml'))
+    _task_repo.set_path(str(_data_dir / 'tasks.json'))
+    _topic_repo.set_path(str(_data_dir / 'topics.json'))
+    _notes_repo.set_path(str(_data_dir / 'notes.md'))
+
+def _reload_services() -> None:
+    """
+    Reloads all services, e.g. after config changes.
+    """
+    _tasks_service.load()
+    _topics_service.load()
+    _notes_service.load()
 
 
 def _get_config_dir() -> Path:

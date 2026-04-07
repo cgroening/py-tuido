@@ -16,7 +16,7 @@ from termz.util.logger import setup_logging  # type: ignore
 from tuido import PACKAGE_NAME
 
 
-_BUNDLED_CONFIG = Path(__file__).parent / 'data' / 'config.yaml'
+_BUNDLED_DATA_DIR = Path(__file__).parent / 'sample_data'
 
 
 def _get_config_dir() -> Path:
@@ -28,11 +28,29 @@ def _get_config_dir() -> Path:
     return base / PACKAGE_NAME
 
 
+def _get_data_dir() -> Path:
+    """Returns the platform-appropriate user data directory."""
+    if platform.system() == 'Windows':
+        base = Path(os.environ.get('LOCALAPPDATA', Path.home()))
+    else:
+        base = Path.home() / '.local' / 'share'
+    return base / PACKAGE_NAME
+
+
 def _ensure_config_exists(config_path: Path) -> None:
     """Copy bundled default config to user config dir on first run."""
     if not config_path.exists():
         config_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy(_BUNDLED_CONFIG, config_path)
+        shutil.copy(_BUNDLED_DATA_DIR / 'config.yaml', config_path)
+
+
+def _ensure_data_dir_exists(data_dir: Path) -> None:
+    """Create data directory and copy default empty files on first run."""
+    data_dir.mkdir(parents=True, exist_ok=True)
+    for filename in ('tasks.json', 'topics.json', 'notes.md'):
+        dest = data_dir / filename
+        if not dest.exists():
+            shutil.copy(_BUNDLED_DATA_DIR / filename, dest)
 
 
 def main() -> None:
@@ -50,9 +68,13 @@ def main() -> None:
         ),
     )
     parser.add_argument(
-        '--data_folder', type=str, default='data',
+        '-D', '--data_folder', type=str, default=None,
         metavar='DIR',
-        help='Folder containing tasks.json, topics.json, notes.md (default: data/)',
+        help=(
+            'Folder containing tasks.json, topics.json, notes.md '
+            '(default: ~/.local/share/tuido/ on macOS/Linux, '
+            '%%LOCALAPPDATA%%\\tuido\\ on Windows)'
+        ),
     )
     args = parser.parse_args()
 
@@ -64,7 +86,11 @@ def main() -> None:
         _ensure_config_exists(config_path)
 
     # --- Resolve data dir ---
-    data_dir = Path(__file__).parent.parent / args.data_folder
+    if args.data_folder:
+        data_dir = Path(args.data_folder)
+    else:
+        data_dir = _get_data_dir()
+        _ensure_data_dir_exists(data_dir)
 
     # --- Storage layer ---
     from tuido.storage.config.yaml_ import YamlConfigRepository

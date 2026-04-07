@@ -17,7 +17,10 @@ build-backend = "hatchling.build"
 packages = ["tuido"]
 
 [tool.hatch.build.targets.wheel.force-include]
-"tuido/data/config.yaml" = "tuido/data/config.yaml"
+"tuido/sample_data/config.yaml"  = "tuido/sample_data/config.yaml"
+"tuido/sample_data/tasks.json"   = "tuido/sample_data/tasks.json"
+"tuido/sample_data/topics.json"  = "tuido/sample_data/topics.json"
+"tuido/sample_data/notes.md"     = "tuido/sample_data/notes.md"
 
 [tool.mypy]
 ignore_missing_imports = true

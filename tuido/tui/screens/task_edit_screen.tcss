@@ -1,0 +1,29 @@
+TaskEditScreen {
+    align: center middle;
+}
+
+TaskEditScreen #main_container {
+    width: 80%;
+    padding: 1 2 0 2;
+    border: outer $primary;
+}
+
+TaskEditScreen Input, TaskEditScreen Select {
+    margin-bottom: 1;
+}
+
+.invalid_input {
+    background: $error-muted;
+    border: tall $error;
+}
+
+#start_date, #end_date {
+    width: 16;
+}
+
+#task_start_date_weekday_label, #task_end_date_weekday_label {
+    color: $secondary;
+    opacity: 0.8;
+    width: 11;
+    margin: 1 0 1 0;
+}

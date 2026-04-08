@@ -13,7 +13,6 @@ class NotesTab(Static):
     Receives a `NotesService` and wires the TextArea change event to
     the service's throttle/debounce auto-save logic.
     """
-
     _service: NotesService
     textarea: TextArea
     markdown: Markdown

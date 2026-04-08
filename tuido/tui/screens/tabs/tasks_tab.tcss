@@ -1,0 +1,63 @@
+Label.task_column_header {
+    background: $secondary-muted;
+    border: hkey $secondary;
+    padding: 0 0 0 0;
+    width: 100%;
+    margin: 0 0 1 1;
+    offset-x: -1;
+}
+
+VerticalScroll.task_column_vscroll {
+    margin-right: 0;
+    offset-x: 0;
+}
+
+ListView {
+    margin-bottom: 1;
+    width: 100%;
+}
+
+ListView ListItem {
+    margin-bottom: 1;
+    padding: 0 0 0 0;
+}
+
+ListView ListItem.task_prio_high {
+    background: $error-muted 40%;
+    border: hkey $error;
+}
+
+ListView ListItem.task_prio_medium {
+    background: $warning-muted 30%;
+    border: hkey $warning;
+}
+
+ListView ListItem.task_prio_low {
+    background: $success-muted 30%;
+    border: hkey $success;
+}
+
+ListView ListItem.task_prio_none {
+    background: $secondary-muted 90%;
+    border: hkey $secondary 50%;
+}
+
+ListView ListItem.task_prio_high.selected {
+    background: $error-muted 60%;
+    border: outer $error;
+}
+
+ListView ListItem.task_prio_medium.selected {
+    background: $warning-muted 50%;
+    border: outer $warning;
+}
+
+ListView ListItem.task_prio_low.selected {
+    background: $success-muted 50%;
+    border: outer $success;
+}
+
+ListView ListItem.task_prio_none.selected {
+    background: $secondary-muted;
+    border: outer $secondary;
+}

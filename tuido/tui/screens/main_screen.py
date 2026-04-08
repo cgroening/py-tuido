@@ -24,6 +24,9 @@ class MainScreen(Screen[None]):
     behaviour as the original app and keep tab IDs ('tasks', 'topics',
     'notes') compatible with the bindings.yaml group names.
     """
+    CSS_PATH = [
+        'tabs/tasks_tab.tcss', 'tabs/topics_tab.tcss', 'tabs/notes_tab.tcss'
+    ]
 
     _config: ConfigService
     _tasks_service: TasksService

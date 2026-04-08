@@ -15,7 +15,6 @@ class CustomListView(ListView):
 
     This is a workaround for a ListView scrolling issue in this layout.
     """
-
     vertical_scroll: VerticalScroll
     tasks_tab: TasksTab
     column_name: str

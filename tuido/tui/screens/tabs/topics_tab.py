@@ -137,7 +137,6 @@ class TopicsTab(Static):
     Receives ConfigService and TopicsService and exposes helpers that
     TuidoApp action methods call to manipulate the table and form.
     """
-
     _config: ConfigService
     _service: TopicsService
     topics_table: TopicsDataTable

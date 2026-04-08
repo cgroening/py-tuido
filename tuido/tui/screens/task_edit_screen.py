@@ -33,6 +33,7 @@ class TaskEditScreen(ModalScreen[None]):
     Posts a `Submit` message when the user saves so that the parent
     (TuidoApp) can call the service and refresh the view.
     """
+    CSS_PATH = 'task_edit_screen.tcss'
     # TODO: Move the bindings to a yaml file and load them dynamically,
     # like in main_screen.py
     BINDINGS = [

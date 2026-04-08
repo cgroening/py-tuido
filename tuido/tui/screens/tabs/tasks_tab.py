@@ -87,11 +87,11 @@ class CustomListView(ListView):
                 index = min(len(self.children) - 1, index + 1)
         item = self.children[index]
         self.vertical_scroll.scroll_to_widget(item)
-        self.change_class(index)
+        self._change_class(index)
         self.tasks_tab.selected_column_name = self.column_name
         self.tasks_tab.selected_task_index = index
 
-    def change_class(self, index: int) -> None:
+    def _change_class(self, index: int) -> None:
         """
         Adds `selected` class to the item at the given index and removes it
         from all other items.
@@ -110,7 +110,7 @@ class CustomListView(ListView):
         """
         for item in self.children:
             item.remove_class('selected')
-        self.change_class(self.index or 0)
+        self._change_class(self.index or 0)
         self.tasks_tab.selected_column_name = self.column_name
         self.tasks_tab.selected_task_index = self.index or 0
 

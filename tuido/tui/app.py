@@ -69,7 +69,7 @@ class TuidoApp(App[None]):
         theme_loader.set_previous_theme_in_textual_app(
             self, DEFAULT_THEME, THEME_CONFIG_FILE
         )
-        self.update_header_theme_name()
+        self._update_header_theme_name()
         self._main_screen = MainScreen(
             self.config_service,
             self.tasks_service,
@@ -84,11 +84,11 @@ class TuidoApp(App[None]):
         When the theme changes, updates the header and saves the new theme to
         the config file for persistence across sessions.
         """
-        self.update_header_theme_name()
+        self._update_header_theme_name()
         theme_loader.save_theme_to_config(theme_name, THEME_CONFIG_FILE)
         theme_loader.load_theme_css(theme_name, self)
 
-    def update_header_theme_name(self) -> None:
+    def _update_header_theme_name(self) -> None:
         """Update the app title to include the current theme name."""
         self.title = f'{self.TITLE} - Theme: {self.theme}'
 

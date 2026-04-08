@@ -156,16 +156,16 @@ class TaskEditScreen(ModalScreen[None]):
         self._submit_changes()
 
     def action_decrease_start_date(self) -> None:
-        self.adjust_date(DateName.START_DATE, DateAdjustment.DECREASE)
+        self._adjust_date(DateName.START_DATE, DateAdjustment.DECREASE)
 
     def action_increase_start_date(self) -> None:
-        self.adjust_date(DateName.START_DATE, DateAdjustment.INCREASE)
+        self._adjust_date(DateName.START_DATE, DateAdjustment.INCREASE)
 
     def action_decrease_end_date(self) -> None:
-        self.adjust_date(DateName.END_DATE, DateAdjustment.DECREASE)
+        self._adjust_date(DateName.END_DATE, DateAdjustment.DECREASE)
 
     def action_increase_end_date(self) -> None:
-        self.adjust_date(DateName.END_DATE, DateAdjustment.INCREASE)
+        self._adjust_date(DateName.END_DATE, DateAdjustment.INCREASE)
 
     def action_clear_start_date(self) -> None:
         """Clears the start date input and updates the weekday label."""
@@ -245,7 +245,7 @@ class TaskEditScreen(ModalScreen[None]):
         if priority:
             self.priority_input.value = priority
 
-    def adjust_date(
+    def _adjust_date(
         self, date_name: DateName, adjustment: DateAdjustment
     ) -> None:
         """
@@ -302,7 +302,7 @@ class TaskEditScreen(ModalScreen[None]):
 
         if start and end and start > end:
             if adjust_start:
-                self.adjust_date(DateName.START_DATE, DateAdjustment.DECREASE)
+                self._adjust_date(DateName.START_DATE, DateAdjustment.DECREASE)
             else:
                 self.end_date_input.value = self.start_date_input.value
 

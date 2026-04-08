@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Mapping
 from datetime import datetime
 from termz.util.datetime import (
     date_to_timestamp, date_diff, today_timestamp
@@ -53,7 +54,7 @@ class TasksService:
         return self._column_captions
 
     def add_task(
-        self, column_name: str, task_raw: dict[str, object]
+        self, column_name: str, task_raw: Mapping[str, object]
     ) -> tuple[Task, int]:
         """
         Adds a new task to the given column.
@@ -84,7 +85,7 @@ class TasksService:
         self,
         column_name: str,
         task_index: int,
-        task_raw: dict[str, object],
+        task_raw: Mapping[str, object],
     ) -> tuple[Task, int]:
         """
         Replaces an existing task with updated data and returns the updated
@@ -178,7 +179,7 @@ class TasksService:
         logging.info('TasksService: tasks saved.')
 
     def _create_task(
-        self, column_name: str, task_dict: dict[str, object]
+        self, column_name: str, task_dict: Mapping[str, object]
     ) -> Task:
         """Creates a Task object from raw task data."""
         return Task(

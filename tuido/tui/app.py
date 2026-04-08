@@ -1,20 +1,17 @@
 import asyncio
 import logging
 from pathlib import Path
-
 from textual import work
-from textual.app import App, ComposeResult
+from textual.app import App
 from textual.widgets import DataTable, Input, Select, TextArea
-
-from termz.tui.question_screen import QuestionScreen  # type: ignore
-from termz.tui.theme_loader import ThemeLoader        # type: ignore
-
+from termz.tui.question_screen import QuestionScreen
+from termz.tui.theme_loader import ThemeLoader
 from tuido import APP_TITLE
 from tuido.services.config_service import ConfigService
 from tuido.services.notes_service import NotesService
 from tuido.services.tasks_service import TasksService
 from tuido.services.topics_service import TopicsService
-from tuido.tui.bindings import CUSTOM_BINDINGS
+from tuido.tui.bindings import custom_bindings
 from tuido.tui.screens.main_screen import MainScreen
 from tuido.tui.screens.task_edit_screen import TaskEditScreen
 from tuido.tui.screens.tabs.tasks_tab import TasksTab
@@ -29,7 +26,7 @@ DEFAULT_THEME     = 'classic-black'
 theme_loader      = ThemeLoader(THEMES_DIR, include_standard_themes=True)
 
 
-class TuidoApp(App):
+class TuidoApp(App[None]):
     """
     Root Textual application for Tuido.
 
@@ -40,7 +37,7 @@ class TuidoApp(App):
 
     TITLE    = APP_TITLE
     CSS_PATH = 'global.tcss'
-    BINDINGS = CUSTOM_BINDINGS.get_bindings()  # type: ignore
+    BINDINGS = custom_bindings.get_bindings()
 
     config_service: ConfigService
     tasks_service: TasksService
@@ -48,7 +45,7 @@ class TuidoApp(App):
     notes_service: NotesService
 
     _main_screen: MainScreen
-    _task_action: str  # 'new' | 'edit'
+    _task_action: str
     _index_of_edited_task: int
 
     def __init__(
@@ -82,38 +79,40 @@ class TuidoApp(App):
         self.push_screen(self._main_screen)
         logging.info('TuidoApp mounted.')
 
-    # ------------------------------------------------------------------ #
-    #  Theme                                                               #
-    # ------------------------------------------------------------------ #
-
     def watch_theme(self, theme_name: str) -> None:
+        """
+        When the theme changes, updates the header and saves the new theme to
+        the config file for persistence across sessions.
+        """
         self.update_header_theme_name()
         theme_loader.save_theme_to_config(theme_name, THEME_CONFIG_FILE)
         theme_loader.load_theme_css(theme_name, self)
 
     def update_header_theme_name(self) -> None:
+        """Update the app title to include the current theme name."""
         self.title = f'{self.TITLE} - Theme: {self.theme}'
-
-    # ------------------------------------------------------------------ #
-    #  check_action — shows/hides bindings per active tab                 #
-    # ------------------------------------------------------------------ #
 
     def check_action(
         self, action: str, parameters: tuple[object, ...]
     ) -> bool | None:
+        """
+        Override the default check_action to route custom actions through the
+        CUSTOM_BINDINGS handler, which can decide based on the active tab and
+        other factors whether to allow the action and which method to call.
+        """
         try:
             active_group = self._main_screen.current_tab_name
         except Exception:
             active_group = 'tasks'
-        return CUSTOM_BINDINGS.handle_check_action(
+        return custom_bindings.handle_check_action(
             action=action,
             _parameters=parameters,
             active_group=active_group,
         )
 
-    # ------------------------------------------------------------------ #
-    #  Global actions (themes + tab navigation)                           #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    #  Global actions (themes + tab navigation)                                #
+    # ------------------------------------------------------------------------ #
 
     def action_next_theme(self) -> None:
         theme_loader.change_to_next_or_previous_theme(1, self)
@@ -129,9 +128,9 @@ class TuidoApp(App):
         from textual.widgets import Tabs
         self._main_screen.query_one('#main_tabs', Tabs).action_next_tab()
 
-    # ------------------------------------------------------------------ #
-    #  Tasks actions                                                       #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    #  Tasks actions                                                           #
+    # ------------------------------------------------------------------------ #
 
     def action_tasks_new(self) -> None:
         self._open_task_edit_screen('new')
@@ -180,7 +179,7 @@ class TuidoApp(App):
     def on_task_edit_screen_submit(
         self, message: TaskEditScreen.Submit
     ) -> None:
-        """Handle task save from the edit screen."""
+        """Handles task save from the edit screen."""
         logging.info(f'on_task_edit_screen_submit: {message}')
         tasks_tab = self._get_tasks_tab()
         task_raw = {
@@ -194,11 +193,11 @@ class TuidoApp(App):
 
         if self._task_action == 'new':
             col = self.config_service.get_task_column_names()[0]
-            task, idx = self.tasks_service.add_task(col, task_raw)
+            _task, idx = self.tasks_service.add_task(col, task_raw)
         else:
             col   = tasks_tab.selected_column_name
             index = tasks_tab.selected_task_index
-            task, idx = self.tasks_service.update_task(col, index, task_raw)
+            _task, idx = self.tasks_service.update_task(col, index, task_raw)
 
         tasks_tab.refresh_column(col)
         self._index_of_edited_task = idx
@@ -208,9 +207,9 @@ class TuidoApp(App):
         )
         self.call_later(lambda: tasks_tab.select_task(col, idx))
 
-    # ------------------------------------------------------------------ #
-    #  Topics actions                                                      #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    #  Topics actions                                                          #
+    # ------------------------------------------------------------------------ #
 
     def action_topics_new(self) -> None:
         topics_tab = self._get_topics_tab()
@@ -220,7 +219,7 @@ class TuidoApp(App):
         topics_tab.create_new_topic()
 
     def action_topics_focus_table(self) -> None:
-        table = self._main_screen.query_one('#topics_table', DataTable)
+        table = self._main_screen.query_one('#topics_table', DataTable[str])
         self.set_focus(table)
         self.notify('Topics table focused!')
 
@@ -235,7 +234,9 @@ class TuidoApp(App):
 
     @work
     async def action_topics_discard(self) -> None:
-        if await self.push_screen_wait(QuestionScreen('Really discard changes?')):
+        if await self.push_screen_wait(
+            QuestionScreen('Really discard changes?')
+        ):
             topics_tab = self._get_topics_tab()
             topics_tab.update_input_fields(called_from_discard=True)
             for field in list(topics_tab.user_changed_inputs):
@@ -256,9 +257,9 @@ class TuidoApp(App):
         else:
             self.notify('Deletion canceled.', severity='warning')
 
-    # ------------------------------------------------------------------ #
-    #  Notes actions                                                       #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    #  Notes actions                                                           #
+    # ------------------------------------------------------------------------ #
 
     def action_notes_show_textarea(self) -> None:
         notes_tab = self._main_screen.notes_tab
@@ -275,9 +276,9 @@ class TuidoApp(App):
         notes_tab.query_one('#notes_textarea', TextArea).remove_class('hidden')
         notes_tab.query_one('#notes_markdown').remove_class('hidden')
 
-    # ------------------------------------------------------------------ #
-    #  Input-change tracking for topics (unchanged / changed highlighting) #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    #  Input-change tracking for topics (unchanged / changed highlighting)     #
+    # ------------------------------------------------------------------------ #
 
     def on_input_changed(self, event: Input.Changed) -> None:
         input_name = event.input.id
@@ -304,7 +305,7 @@ class TuidoApp(App):
         self._compare_input_to_original(event)
 
     def on_data_table_row_highlighted(
-        self, event: DataTable.RowHighlighted
+        self, _event: DataTable.RowHighlighted
     ) -> None:
         topics_tab = self._get_topics_tab()
         topics_tab.update_input_fields()
@@ -319,11 +320,11 @@ class TuidoApp(App):
         elif isinstance(event, TextArea.Changed):
             widget      = event.text_area
             current_val = widget.text
-        elif isinstance(event, Select.Changed):
+        elif isinstance(event, Select.Changed):  # type: ignore
             widget      = event.select
             current_val = widget.value
-        else:
-            return
+        # else:
+        #     return
 
         if widget.id is None or not widget.id.startswith('topics_'):
             return
@@ -353,9 +354,9 @@ class TuidoApp(App):
             len(topics_tab.user_changed_inputs) > 0
         )
 
-    # ------------------------------------------------------------------ #
-    #  Private helpers                                                     #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    #  Private helpers                                                         #
+    # ------------------------------------------------------------------------ #
 
     def _get_tasks_tab(self) -> TasksTab:
         return self._main_screen.tasks_tab
@@ -364,7 +365,7 @@ class TuidoApp(App):
         return self._main_screen.topics_tab
 
     def _open_task_edit_screen(self, action: str) -> None:
-        """Open the TaskEditScreen for 'new' or 'edit'."""
+        """Opens the TaskEditScreen for 'new' or 'edit'."""
         self._task_action = action
         tasks_tab = self._get_tasks_tab()
 
@@ -387,7 +388,7 @@ class TuidoApp(App):
             screen.set_input_values(task)
 
     def _move_task(self, direction: int) -> None:
-        """Move the selected task left (direction=-1) or right (+1)."""
+        """Moves the selected task left (direction=-1) or right (+1)."""
         tasks_tab    = self._get_tasks_tab()
         col_names    = self.config_service.get_task_column_names()
         source_col   = tasks_tab.selected_column_name
@@ -401,7 +402,7 @@ class TuidoApp(App):
 
         target_col = col_names[target_index]
         task_index = tasks_tab.selected_task_index
-        task, new_idx = self.tasks_service.move_task(
+        _task, new_idx = self.tasks_service.move_task(
             source_col, task_index, target_col
         )
 
@@ -413,8 +414,8 @@ class TuidoApp(App):
         lv.focus()
 
     def _select_adjacent_column(self, direction: int) -> None:
-        """Move focus to the nearest non-empty column."""
-        from termz.util.index import next_index  # type: ignore
+        """Moves focus to the nearest non-empty column."""
+        from termz.util.index import next_index
 
         tasks_tab   = self._get_tasks_tab()
         list_views  = tasks_tab.list_views
@@ -436,7 +437,7 @@ class TuidoApp(App):
                 break
 
     def _select_adjacent_task(self, direction: int) -> None:
-        """Select the task above (direction=-1) or below (+1)."""
+        """Selects the task above (direction=-1) or below (+1)."""
         from termz.util.index import next_index  # type: ignore
 
         tasks_tab = self._get_tasks_tab()

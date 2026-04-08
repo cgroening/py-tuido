@@ -63,8 +63,8 @@ class TopicFormWidgets(VerticalGroup):
             widget.disabled = True
 
         if input_width := form_col.get('input_width'):
-            label.styles.width = str(input_width)
-            widget.styles.width = str(input_width)
+            label.styles.width = str(int(str(input_width))-1)
+            widget.styles.width = str(int(str(input_width))-1)
 
         group = VerticalGroup(label, widget)
         if input_width := form_col.get('input_width'):

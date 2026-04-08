@@ -3,6 +3,7 @@ from textual.containers import Container
 from textual.reactive import reactive
 from textual.screen import Screen
 from textual.widgets import Header, Tabs, Tab
+from termz.io.app_state_storage import AppStateStorage
 from termz.tui.custom_widgets.multiline_footer import MultiLineFooter
 from tuido import APP_ICON
 from tuido.services.config_service import ConfigService
@@ -32,6 +33,7 @@ class MainScreen(Screen[None]):
     _tasks_service: TasksService
     _topics_service: TopicsService
     _notes_service: NotesService
+    _app_state: AppStateStorage
 
     current_tab_name = reactive('tasks', bindings=True)
 
@@ -48,7 +50,7 @@ class MainScreen(Screen[None]):
         notes_service: NotesService,
     ) -> None:
         super().__init__()
-        self._config  = config
+        self._config    = config
         self.tasks_tab  = TasksTab(tasks_service, id='tasks-tab')
         self.topics_tab = TopicsTab(config, topics_service, id='topics-tab',
                                     classes='hidden')
@@ -79,6 +81,8 @@ class MainScreen(Screen[None]):
         """Initializes the topics table after all widgets are mounted."""
         self.topics_tab.initialize_table()
         self.tasks_tab.set_can_focus()
+        last_tab = str(AppStateStorage().get('last_tab', 'tasks'))
+        self.query_one('#main_tabs', Tabs).active = last_tab
 
     def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
         """Shows the activated tab and hide the others."""
@@ -88,3 +92,4 @@ class MainScreen(Screen[None]):
             self.query_one(f'#{tab_id}-tab').add_class('hidden')
         self.query_one(f'#{event.tab.id}-tab').remove_class('hidden')
         self.current_tab_name = event.tab.id
+        AppStateStorage().set('last_tab', event.tab.id)

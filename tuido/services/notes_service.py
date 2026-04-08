@@ -1,7 +1,6 @@
 import logging
 import threading
 import time
-
 from tuido.storage.notes.base import BaseNotesRepository
 
 
@@ -12,10 +11,10 @@ class NotesService:
     The service holds the current text in memory and saves it to the
     repository with two complementary mechanisms:
 
-    - **Throttle:** saves at most once per ``throttle_interval`` seconds
+    - **Throttle:** saves at most once per `THROTTLE_INTERVAL` seconds
       while the user is actively typing.
     - **Debounce:** saves once the user has stopped typing for
-      ``debounce_interval`` seconds.
+      `DEBOUNCE_INTERVAL` seconds.
     """
 
     THROTTLE_INTERVAL: float = 5.0
@@ -30,14 +29,14 @@ class NotesService:
 
     def __init__(self, repo: BaseNotesRepository) -> None:
         self._repo = repo
-        self._notes = repo.load()
+        self._notes = repo.load_note_text()
         self._last_throttle = 0.0
         self._debounce_timer = None
         self._lock = threading.Lock()
 
     def load(self) -> None:
         """Reload notes from the repository."""
-        self._notes = self._repo.load()
+        self._notes = self._repo.load_note_text()
 
     def get_notes(self) -> str:
         """Return the current in-memory notes text."""
@@ -66,7 +65,7 @@ class NotesService:
     def _save(self, text: str, reason: str) -> None:
         if self._notes != text:
             self._notes = text
-            self._repo.save(text)
+            self._repo.save_note_text(text)
             logging.info(
                 f'[{time.strftime("%X")}] [{reason}] Notes saved.'
             )

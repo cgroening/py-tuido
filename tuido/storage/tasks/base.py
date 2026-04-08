@@ -10,22 +10,22 @@ class BaseTaskRepository(ABC):
     """
 
     @abstractmethod
-    def load(self) -> dict[str, list[dict]]:
+    def load_task(self) -> dict[str, list[dict[str, object]]]:
         """
-        Load tasks from the backing store.
+        Loads tasks from the backing store.
 
         Returns
         -------
-        dict[str, list[dict]]
+        dict[str, list[dict[str, object]]]
             Mapping of column_name → list of raw task dicts with keys:
             description, priority (int), start_date, end_date.
         """
         ...
 
     @abstractmethod
-    def save(self, tasks_raw: dict[str, list[dict]]) -> None:
+    def save_task(self, tasks_raw: dict[str, list[dict[str, object]]]) -> None:
         """
-        Persist the full tasks dict to the backing store.
+        Persists the full tasks dict to the backing store.
 
         Parameters
         ----------

@@ -5,11 +5,11 @@ class BaseNotesRepository(ABC):
     """Interface for notes persistence."""
 
     @abstractmethod
-    def load(self) -> str:
-        """Load and return the notes text."""
+    def load_note_text(self) -> str:
+        """Loads and returns the notes text."""
         ...
 
     @abstractmethod
-    def save(self, text: str) -> None:
-        """Persist the notes text."""
+    def save_note_text(self, text: str) -> None:
+        """Persists the notes text."""
         ...

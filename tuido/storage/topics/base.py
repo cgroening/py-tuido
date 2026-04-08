@@ -5,25 +5,25 @@ class BaseTopicRepository(ABC):
     """Interface for topic persistence."""
 
     @abstractmethod
-    def load(self) -> list[dict]:
+    def load_topics(self) -> list[dict[str, object]]:
         """
-        Load all topics from the backing store.
+        Loads all topics from the backing store.
 
         Returns
         -------
-        list[dict]
+        list[dict[str, object]]
             List of topic dicts. Each dict has at least an 'id' key.
         """
         ...
 
     @abstractmethod
-    def save(self, topics: list[dict]) -> None:
+    def save_topics(self, topics: list[dict[str, object]]) -> None:
         """
-        Persist the full topics list to the backing store.
+        Persists the full topics list to the backing store.
 
         Parameters
         ----------
-        topics : list[dict]
+        topics : list[dict[str, object]]
             List of topic dicts to persist.
         """
         ...

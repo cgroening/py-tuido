@@ -95,7 +95,7 @@ def _set_repo_paths() -> None:
     """
     Sets the resolved config and data paths on the repositories.
     """
-    _config_repo.set_path(str(_config_dir / 'config.yaml'))
+    _config_repo.load_config(str(_config_dir / 'config.yaml'))
     _task_repo.set_path(str(_data_dir / 'tasks.json'))
     _topic_repo.set_path(str(_data_dir / 'topics.json'))
     _notes_repo.set_path(str(_data_dir / 'notes.md'))
@@ -105,7 +105,7 @@ def _reload_services() -> None:
     Reloads all services, e.g. after config changes.
     """
     _tasks_service.load()
-    _topics_service.load()
+    _topics_service.load_topics()
     _notes_service.load()
 
 

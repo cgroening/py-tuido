@@ -13,7 +13,7 @@ class YamlConfigRepository(BaseConfigRepository):
     and exposes them via the BaseConfigRepository interface.
     """
 
-    _fields: list[list[dict]]
+    _fields: list[list[dict[str, object]]]
     _columns: list[FieldDefinition]
     _columns_dict: dict[str, FieldDefinition]
     _task_column_names: list[str]
@@ -27,9 +27,10 @@ class YamlConfigRepository(BaseConfigRepository):
         self._task_column_names = []
         self._task_column_captions = {}
         if yaml_path is not None:
-            self.set_path(yaml_path)
+            self.load_config(yaml_path)
 
-    def set_path(self, yaml_path: str) -> None:
+    def load_config(self, yaml_path: str) -> None:
+        """Loads and parses the YAML configuration from the given file path."""
         if not os.path.exists(yaml_path):
             raise ConfigNotFoundError(yaml_path)
 
@@ -45,20 +46,20 @@ class YamlConfigRepository(BaseConfigRepository):
         for row in config_data['fields']:
             for col in row:
                 field = FieldDefinition(
-                    name              = col['name'],
-                    caption           = col['caption'],
-                    type              = self._parse_field_type(col['type']),
-                    lines             = col.get('lines', 1),
-                    options           = col.get('options', []),
-                    show_in_table     = self._parse_show_in_table(
+                    name               = col['name'],
+                    caption            = col['caption'],
+                    type               = self._parse_field_type(col['type']),
+                    lines              = col.get('lines', 1),
+                    options            = col.get('options', []),
+                    show_in_table      = self._parse_show_in_table(
                                             col.get('table_column_width')
                                         ),
-                    table_column_width= self._parse_column_width(
+                    table_column_width = self._parse_column_width(
                                             col.get('table_column_width')
                                         ),
-                    input_width       = col.get('input_width', None),
-                    read_only         = col.get('read_only', False),
-                    computed          = col.get('computed', None),
+                    input_width        = col.get('input_width', None),
+                    read_only          = col.get('read_only', False),
+                    computed           = col.get('computed', None),
                 )
                 self._columns.append(field)
                 self._columns_dict[col['name']] = field
@@ -69,11 +70,7 @@ class YamlConfigRepository(BaseConfigRepository):
             self._task_column_names.append(name)
             self._task_column_captions[name] = caption
 
-    # ------------------------------------------------------------------ #
-    #  BaseConfigRepository interface                                      #
-    # ------------------------------------------------------------------ #
-
-    def get_fields(self) -> list[list[dict]]:
+    def get_fields(self) -> list[list[dict[str, object]]]:
         return self._fields
 
     def get_columns(self) -> list[FieldDefinition]:
@@ -88,25 +85,35 @@ class YamlConfigRepository(BaseConfigRepository):
     def get_task_column_captions(self) -> dict[str, str]:
         return self._task_column_captions
 
-    # ------------------------------------------------------------------ #
-    #  Private helpers                                                     #
-    # ------------------------------------------------------------------ #
-
     @staticmethod
     def _parse_field_type(type_str: str) -> FieldType:
+        """Parses the field type string from the YAML into a FieldType enum."""
         match type_str.upper():
-            case 'STRING': return FieldType.STRING
-            case 'NUMBER': return FieldType.NUMBER
-            case 'SELECT': return FieldType.SELECT
-            case 'DATE':   return FieldType.DATE
-            case _: raise ValueError(f'Unknown field type: {type_str}')
+            case 'STRING':
+                return FieldType.STRING
+            case 'NUMBER':
+                return FieldType.NUMBER
+            case 'SELECT':
+                return FieldType.SELECT
+            case 'DATE':
+                return FieldType.DATE
+            case _:
+                raise ValueError(f'Unknown field type: {type_str}')
 
     @staticmethod
     def _parse_show_in_table(width: str | None) -> bool:
+        """
+        Determines whether to show the field as a table column based on the
+        presence and validity of the `table_column_width` value.
+        """
         return width is not None and int(width) >= 0
 
     @staticmethod
     def _parse_column_width(width: str | None) -> int:
+        """
+        Parses the `table_column_width` value from the YAML into an integer
+        width.
+        """
         if width is not None and int(width) >= 0:
             return int(width)
         return -1

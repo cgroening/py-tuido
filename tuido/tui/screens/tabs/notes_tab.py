@@ -1,18 +1,16 @@
 import threading
-
 from textual import on
 from textual.app import ComposeResult
 from textual.containers import Grid
 from textual.widgets import Static, TextArea, Markdown
-
 from tuido.services.notes_service import NotesService
 
 
 class NotesTab(Static):
     """
-    Notes tab — side-by-side Markdown textarea and rendered preview.
+    Notes tab - side-by-side Markdown textarea and rendered preview.
 
-    Receives a NotesService and wires the TextArea change event to
+    Receives a `NotesService` and wires the TextArea change event to
     the service's throttle/debounce auto-save logic.
     """
 
@@ -21,8 +19,9 @@ class NotesTab(Static):
     markdown: Markdown
 
 
-    def __init__(self, service: NotesService, **kwargs) -> None:
-        super().__init__(**kwargs)
+    def __init__(self, service: NotesService, **kwargs) -> None:  # type:ignore[reportMissingParameterType]
+        """Initializes the `NotesTab` with the provided `NotesService`."""
+        super().__init__(**kwargs)  # type:ignore[reportMissingParameterType]
         self._service = service
         self.textarea = TextArea(
             id='notes_textarea',
@@ -34,7 +33,7 @@ class NotesTab(Static):
         self.markdown = Markdown(id='notes_markdown', classes='notes-markdown')
 
     def on_mount(self) -> None:
-        """Populate the textarea with saved notes on mount."""
+        """Populates the textarea with saved notes on mount."""
         self.textarea.text = self._service.get_notes()
 
     def compose(self) -> ComposeResult:
@@ -44,7 +43,7 @@ class NotesTab(Static):
 
     @on(TextArea.Changed)
     async def update_markdown(self, event: TextArea.Changed) -> None:
-        """Sync the markdown preview and trigger auto-save."""
+        """Syncs the markdown preview and trigger auto-save."""
         await self.query_one('#notes_markdown').update(event.text_area.text)  # type: ignore
         threading.Thread(
             target=self._service.on_text_changed,

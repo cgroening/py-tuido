@@ -3,8 +3,7 @@ from textual.containers import Container
 from textual.reactive import reactive
 from textual.screen import Screen
 from textual.widgets import Header, Tabs, Tab
-from termz.tui.custom_widgets.multiline_footer import MultiLineFooter  # type: ignore
-
+from termz.tui.custom_widgets.multiline_footer import MultiLineFooter
 from tuido import APP_ICON
 from tuido.services.config_service import ConfigService
 from tuido.services.notes_service import NotesService
@@ -16,7 +15,7 @@ from tuido.tui.screens.tabs.tasks_tab import TasksTab
 from tuido.tui.screens.tabs.topics_tab import TopicsTab
 
 
-class MainScreen(Screen):
+class MainScreen(Screen[None]):
     """
     Primary screen containing the three main tabs (Tasks, Topics, Notes).
 
@@ -74,12 +73,12 @@ class MainScreen(Screen):
         )
 
     def on_mount(self) -> None:
-        """Initialise the topics table after all widgets are mounted."""
+        """Initializes the topics table after all widgets are mounted."""
         self.topics_tab.initialize_table()
         self.tasks_tab.set_can_focus()
 
     def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
-        """Show the activated tab and hide the others."""
+        """Shows the activated tab and hide the others."""
         if event.tab.id is None:
             return
         for tab_id in ('tasks', 'topics', 'notes'):

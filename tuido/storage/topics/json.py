@@ -7,7 +7,7 @@ from tuido.storage.topics.base import BaseTopicRepository
 class JsonTopicRepository(BaseTopicRepository):
     """Persists topics to a JSON file."""
 
-    _path: str
+    _path: str | None
 
 
     def __init__(self, json_path: str | None = None) -> None:
@@ -30,5 +30,7 @@ class JsonTopicRepository(BaseTopicRepository):
 
     def save_topics(self, topics: list[dict[str, object]]) -> None:
         """Saves the full list of topics to the JSON file."""
+        if self._path is None:
+            return
         with open(self._path, 'w', encoding='utf-8') as f:
             json.dump(topics, f, indent=4)

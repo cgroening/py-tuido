@@ -1,14 +1,10 @@
 from __future__ import annotations
-
-from textual import on
 from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.events import Key, Focus, Blur
 from textual.widgets import Static, ListView, ListItem, Label
 from rich.text import Text
-
 from termz.util.index import next_index  # type: ignore
-
 from tuido.domain.models import Task, TaskPriority
 from tuido.services.tasks_service import TasksService
 
@@ -32,10 +28,14 @@ class CustomListView(ListView):
         tasks_tab: TasksTab,
         column_name: str,
         loop_behavior: bool = True,
-        *args,
-        **kwargs,
+        *args,  # type:ignore[reportMissingParameterType]
+        **kwargs,  # type:ignore[reportMissingParameterType]
     ):
-        super().__init__(*args, **kwargs)
+        """
+        Initializes the `CustomListView` with the provided `VerticalScroll`,
+        `TasksTab` and `column_name`.
+        """
+        super().__init__(*args, **kwargs)  # type:ignore[reportMissingParameterType]
         self.vertical_scroll = vertical_scroll
         self.vertical_scroll.can_focus = False
         self.tasks_tab = tasks_tab
@@ -43,10 +43,16 @@ class CustomListView(ListView):
         self.loop_behavior = loop_behavior
 
     async def on_key(self, event: Key) -> None:
+        """
+        Handles up/down key events to navigate the list, applying loop
+        behavior if enabled and scrolls the parent VerticalScroll to the
+        selected item.
+        """
         loop_applied = self._enable_loop_behavior(event)
         self._scroll_to_selected_item(event, loop_applied)
 
     def _enable_loop_behavior(self, event: Key) -> bool:
+        """Enables loop behavior for up/down keys if configured."""
         if not self.loop_behavior or event.key not in ('up', 'down'):
             return False
         current_index = self.index or 0
@@ -67,6 +73,10 @@ class CustomListView(ListView):
     def _scroll_to_selected_item(
         self, event: Key, loop_applied: bool
     ) -> None:
+        """
+        Scrolls the parent `VerticalScroll` to the selected item after handling
+        the key event, applying loop behavior if enabled.
+        """
         index = self.index or 0
         if event.key not in ('up', 'down'):
             return
@@ -82,6 +92,10 @@ class CustomListView(ListView):
         self.tasks_tab.selected_task_index = index
 
     def change_class(self, index: int) -> None:
+        """
+        Adds `selected` class to the item at the given index and removes it
+        from all other items.
+        """
         for i, item in enumerate(self.children):
             if isinstance(item, ListItem):
                 if i == index:
@@ -89,18 +103,27 @@ class CustomListView(ListView):
                 else:
                     item.remove_class('selected')
 
-    def on_focus(self, event: Focus) -> None:
+    def on_focus(self, _event: Focus) -> None:
+        """
+        Adds `selected` class to the currently selected item on focus and
+        updates the `TasksTab`'s selected column and task index.
+        """
         for item in self.children:
             item.remove_class('selected')
         self.change_class(self.index or 0)
         self.tasks_tab.selected_column_name = self.column_name
         self.tasks_tab.selected_task_index = self.index or 0
 
-    def on_blur(self, event: Blur) -> None:
+    def on_blur(self, _event: Blur) -> None:
+        """Removes `selected` class from all items on blur. """
         for item in self.children:
             item.remove_class('selected')
 
     async def on_list_view_selected(self, event: ListView.Selected) -> None:
+        """
+        Adds `selected` class to the selected item and updates the `TasksTab`'s
+        selected column and task index.
+        """
         for item in self.children:
             item.remove_class('selected')
         event.item.add_class('selected')
@@ -110,12 +133,12 @@ class CustomListView(ListView):
 
 class TasksTab(Static):
     """
-    Tasks tab — kanban-style board with one column per task state.
+    Tasks tab - kanban-style board with one column per task state.
 
-    Receives a TasksService and uses it to populate the columns on
-    composition. All mutations (add/edit/delete/move) are triggered via
-    TuidoApp action methods that call the service and then call
-    ``refresh_column`` / ``select_task`` on this widget.
+    Receives a TasksService and uses it to populate the columns on composition.
+    All mutations (add/edit/delete/move) are triggered via TuidoApp action
+    methods that call the service and then call `refresh_column`/`select_task`
+    on this widget.
     """
 
     _service: TasksService
@@ -127,15 +150,16 @@ class TasksTab(Static):
     selected_task_index: int
 
 
-    def __init__(self, service: TasksService, **kwargs) -> None:
-        super().__init__(**kwargs)
+    def __init__(self, service: TasksService, **kwargs) -> None:  # type:ignore[reportMissingParameterType]
+        super().__init__(**kwargs)  # type:ignore[reportMissingParameterType]
         self._service = service
         self.list_views = {}
         self.column_names = service.get_column_names()
         self.column_captions = service.get_column_captions()
         self.tasks = service.get_tasks()
         # Default selection
-        self.selected_column_name = self.column_names[0] if self.column_names else ''
+        self.selected_column_name = self.column_names[0] \
+                                    if self.column_names else ''
         self.selected_task_index = 0
 
     def compose(self) -> ComposeResult:
@@ -159,11 +183,16 @@ class TasksTab(Static):
         if event.key == 'enter':
             self.app.action_tasks_edit()  # type: ignore[attr-defined]
 
-    # ------------------------------------------------------------------ #
-    #  List-item creation                                                  #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    #  List-item creation                                                      #
+    # ------------------------------------------------------------------------ #
 
     def create_list_items(self, column_name: str) -> list[ListItem]:
+        """
+        Creates a list of `ListItem` widgets for the given column name based on
+        the tasks in that column, including start/end date info and priority
+        styling.
+        """
         list_items: list[ListItem] = []
         if column_name not in self.tasks:
             return list_items
@@ -174,7 +203,8 @@ class TasksTab(Static):
 
             list_item = ListItem(
                 Static(Text(task.description, style='bold')),
-                *([Static()] if start_text is not None or end_text is not None else []),
+                *([Static()] if start_text is not None \
+                             or end_text is not None else []),
                 *([Static(Text('▶ ' + start_text, style=start_style))]
                   if start_text is not None else []),
                 *([Static(Text('◼ ' + end_text, style=end_style))]
@@ -186,7 +216,7 @@ class TasksTab(Static):
         return list_items
 
     def refresh_column(self, column_name: str) -> None:
-        """Recreate the list view for the given column from service data."""
+        """Recreates the list view for the given column from service data."""
         self.tasks = self._service.get_tasks()
         list_view: ListView = self.list_views[column_name]
         list_view.clear()
@@ -195,7 +225,7 @@ class TasksTab(Static):
         self.set_can_focus()
 
     def select_task(self, column_name: str, index: int) -> None:
-        """Focus the given column's list view and select the given index."""
+        """Focuses the given column's list view and select the given index."""
         list_view = self.list_views[column_name]
         # Toggle focus to ensure on_focus fires
         list_view.can_focus = False
@@ -207,18 +237,25 @@ class TasksTab(Static):
         list_view.refresh()
 
     def set_can_focus(self) -> None:
-        """Enable/disable list view focus depending on whether it has items."""
+        """Enables/disables list view focus depending on whether it has items."""
         for col in self.column_names:
             has_items = col in self.tasks and len(self.tasks[col]) > 0
             self.list_views[col].can_focus = has_items
 
-    # ------------------------------------------------------------------ #
-    #  Date helpers                                                        #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    #  Date helpers                                                            #
+    # ------------------------------------------------------------------------ #
 
-    def _start_date_text_style(
-        self, task: Task
-    ) -> tuple[str | None, str]:
+    def _start_date_text_style(self, task: Task) -> tuple[str | None, str]:
+        """
+        Returns the start date text and style for a task based on its days to
+        start and end, where:
+        - Green: Not started yet but on track (days to start > 0 or None)
+        - Yellow: Starting today (days to start == 0) or overdue but not yet
+          past the end date (days to start < 0 but days to end >= 0)
+        - Red: Overdue and past the end date (days to start < 0 and days to
+          end < 0)
+        """
         if not task.start_date:
             return None, ''
         text = f'{task.start_date} ({task.days_to_start} d)'
@@ -233,9 +270,14 @@ class TasksTab(Static):
             style = 'yellow'
         return text, style
 
-    def _end_date_text_style(
-        self, task: Task
-    ) -> tuple[str | None, str]:
+    def _end_date_text_style(self, task: Task) -> tuple[str | None, str]:
+        """
+        Returns the end date text and style for a task based on its days to end,
+        where:
+        - Green: Not overdue (days to end > 0 or None)
+        - Yellow: Due today (days to end == 0)
+        - Red: Overdue (days to end < 0)
+        """
         if not task.end_date:
             return None, ''
         text = f'{task.end_date} ({task.days_to_end} d)'
@@ -250,8 +292,16 @@ class TasksTab(Static):
 
     @staticmethod
     def _set_priority_class(item: ListItem, task: Task) -> None:
+        """Adds a CSS class to the item based on the task's priority."""
         match task.priority:
-            case TaskPriority.HIGH:   item.add_class('task_prio_high')
-            case TaskPriority.MEDIUM: item.add_class('task_prio_medium')
-            case TaskPriority.LOW:    item.add_class('task_prio_low')
-            case _:                   item.add_class('task_prio_none')
+            case TaskPriority.HIGH:
+                item.add_class('task_prio_high')
+
+            case TaskPriority.MEDIUM:
+                item.add_class('task_prio_medium')
+
+            case TaskPriority.LOW:
+                item.add_class('task_prio_low')
+
+            case _:
+                item.add_class('task_prio_none')

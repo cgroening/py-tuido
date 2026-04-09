@@ -5,6 +5,7 @@ import shutil
 import typer
 from pathlib import Path
 from termz.util.logger import setup_logging
+from termz.util.version import get_version
 from termz.io.app_state_storage import AppStateStorage
 from tuido import PACKAGE_NAME, APP_TITLE, APP_SUB_TITLE
 from tuido.services.config_service  import ConfigService
@@ -42,9 +43,22 @@ _notes_service  = NotesService(_notes_repo)
 app = typer.Typer(help=f'{APP_TITLE} - {APP_SUB_TITLE}')
 
 
+def _version_callback(value: bool) -> None:
+    if value:
+        typer.echo(get_version(PACKAGE_NAME, Path(__file__).parent.parent))
+        raise typer.Exit()
+
+
 @app.callback(invoke_without_command=True)
 def default(
     ctx: typer.Context,
+    _version: bool = typer.Option(
+        False,
+        '--version',
+        callback=_version_callback,
+        is_eager=True,
+        help='Show version and exit.',
+    ),
     custom_config_dir: Path | None = typer.Option(
         None,
         '-C', '--config',

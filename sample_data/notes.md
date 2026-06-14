@@ -1,14 +1,14 @@
 # Notes
 
-Welcome to **tuido** — your terminal-based task and topic manager.
+Welcome to **tuido** – your terminal-based task and topic manager.
 
 ## Keybindings
 
-- `q` / `w` — switch tabs
-- `n` — new task or topic
-- `e` — edit selected task
-- `d` — delete selected item
-- `j` / `k` — navigate theme (on tasks tab)
+- `q` / `w` – switch tabs
+- `n` – new task or topic
+- `e` – edit selected task
+- `d` – delete selected item
+- `j` / `k` – navigate theme (on tasks tab)
 
 ## Tips
 
